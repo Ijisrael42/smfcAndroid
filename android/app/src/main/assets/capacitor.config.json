@@ -1,0 +1,6 @@
+{
+	"appId": "com.smfc.tutors",
+	"appName": "smfctutors",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}

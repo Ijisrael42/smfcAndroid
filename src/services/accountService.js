@@ -6,6 +6,7 @@ import { config } from "../helpers/config";
 import { tutorService } from './tutorService';
 // import { generateToken } from '../helpers/firebase';
 // import { applicationService } from './applicationService'; 
+import { Storage } from '@capacitor/storage';
 
 const userSubject = new BehaviorSubject(null);
 const tutorSubject = new BehaviorSubject(null);
@@ -34,31 +35,35 @@ export const accountService = {
     setTutor
 }; 
 
-function setUser(user){
+async function setUser(user){
 
     userSubject.next(user);
-    window.localStorage.setItem( 'user', JSON.stringify(user) );
+    // window.localStorage.setItem( 'user', JSON.stringify(user) );
+    await Storage.set({ key: 'user', value: JSON.stringify(user), });
     startRefreshTokenTimer();
 }
 
-function setTutor(tutor){
+async function setTutor(tutor){
 
     tutorSubject.next(tutor);
-    window.localStorage.setItem( 'tutor', JSON.stringify(tutor) );
+    // window.localStorage.setItem( 'tutor', JSON.stringify(tutor) );
+    await Storage.set({ key: 'tutor', value: JSON.stringify(tutor), });
 }
 
-function switctToUser() {
+async function switctToUser() {
     const user = userParse();
     user.role = "User";
     userSubject.next(user);
-    window.localStorage.setItem( 'user', JSON.stringify(user) );
+    await Storage.set({ key: 'user', value: JSON.stringify(user), });
+    // window.localStorage.setItem( 'user', JSON.stringify(user) );
 }
 
-function switctToTutor() {
+async function switctToTutor() {
     const user = userParse();
     user.role = "Tutor";
     userSubject.next(user);
-    window.localStorage.setItem( 'user', JSON.stringify(user) );
+    await Storage.set({ key: 'user', value: JSON.stringify(user), });
+    // window.localStorage.setItem( 'user', JSON.stringify(user) );
 }
 
 function login(email, password) {
@@ -117,12 +122,18 @@ function getWithTutorId(id) {
     return fetchWrapper.get(`${baseUrl}/tutor/${id}`);
 }
 
-function userParse() { 
-    return JSON.parse( window.localStorage.getItem('user') ); 
+async function userParse() { 
+
+    const { value } = await Storage.get({ key: 'user' });
+    return JSON.parse( value ); 
+    // return JSON.parse( window.localStorage.getItem('user') ); 
 }
 
-function tutorParse() { 
-    return JSON.parse( window.localStorage.getItem('tutor') ); 
+async function tutorParse() { 
+
+    const { value } = await Storage.get({ key: 'tutor' });
+    return JSON.parse( value ); 
+    // return JSON.parse( window.localStorage.getItem('tutor') ); 
 }
 
 function logout() {
@@ -139,11 +150,13 @@ function logout() {
     });
 } 
 
-function removeUserDetails() {
+async function removeUserDetails() {
     stopRefreshTokenTimer();
     userSubject.next(null);
-    window.localStorage.removeItem('user');
-    window.localStorage.removeItem('tutor');
+    await Storage.remove({ key: 'user' });
+    await Storage.remove({ key: 'tutor' });
+    // window.localStorage.removeItem('user');
+    // window.localStorage.removeItem('tutor');
 }
 
 function refreshToken() {

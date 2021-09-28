@@ -21,15 +21,8 @@ export const fileService = {
 function create(params) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-
-            return fetchWrapper.post(baseUrl, params);
-       });        
+        .then(user => { return fetchWrapper.post(baseUrl, params) });        
     }
     return fetchWrapper.post(baseUrl, params);
 }
@@ -37,15 +30,8 @@ function create(params) {
 function upload(params) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-
-            return fetchWrapper.file(`${baseUrl}/upload`, params);
-        });        
+        .then(user => { return fetchWrapper.file(`${baseUrl}/upload`, params) });        
     }
     return fetchWrapper.file(`${baseUrl}/upload`, params);
 }
@@ -53,15 +39,8 @@ function upload(params) {
 function fileDownload(params) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-
-            return fetchWrapper.download(`${baseUrl}/file-download`, params);
-       });        
+        .then(user => { return fetchWrapper.download(`${baseUrl}/file-download`, params) });        
     }
     return fetchWrapper.download(`${baseUrl}/file-download`, params);
 }
@@ -69,15 +48,8 @@ function fileDownload(params) {
 function update(id, params) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-
-            return fetchWrapper.put(`${baseUrl}/${id}`, params);
-        });        
+        .then(user => { return fetchWrapper.put(`${baseUrl}/${id}`, params) });        
     }
     return fetchWrapper.put(`${baseUrl}/${id}`, params);
 }
@@ -85,15 +57,8 @@ function update(id, params) {
 function getById(id) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-
-            return fetchWrapper.get(`${baseUrl}/${id}`);
-        });        
+        .then(user => { return fetchWrapper.get(`${baseUrl}/${id}`); });        
     }
     return fetchWrapper.get(`${baseUrl}/${id}`);
 }
@@ -101,30 +66,17 @@ function getById(id) {
 function getByUserId(user_id) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-            return fetchWrapper.get(`${baseUrl}/list/user/${user_id}`);
-        });        
+        .then(user => { return fetchWrapper.get(`${baseUrl}/list/user/${user_id}`) });        
     }
-
     return fetchWrapper.get(`${baseUrl}/list/user/${user_id}`);
 }
 
 function getByCategory(params) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-            return fetchWrapper.post(`${baseUrl}/category`, params);
-        });        
+        .then(user => { return fetchWrapper.post(`${baseUrl}/category`, params) });        
     }
     return fetchWrapper.post(`${baseUrl}/category`, params);
 }
@@ -132,14 +84,8 @@ function getByCategory(params) {
 function getByTutorId(id) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-            return fetchWrapper.get(`${baseUrl}/list/tutor/${id}`);
-        });        
+        .then(user => { return fetchWrapper.get(`${baseUrl}/list/tutor/${id}`) });        
     }
     return fetchWrapper.get(`${baseUrl}/list/tutor/${id}`);
 }
@@ -147,15 +93,8 @@ function getByTutorId(id) {
 function getByTutorIdUnbidded(id) {
 
     if( fetchWrapper.isTokenExpired() ) {
-
         return accountService.getJwt()
-        .then(user => {
-            // publish user to subscribers and start timer to refresh token
-            // user.jwtToken = null;
-            window.localStorage.setItem( 'user', JSON.stringify(user) );
-            return fetchWrapper.get(`${baseUrl}/tutor/unbidded/${id}`);
-        });        
+        .then(user => { return fetchWrapper.get(`${baseUrl}/tutor/unbidded/${id}`) });        
     }
-
     return fetchWrapper.get(`${baseUrl}/tutor/unbidded/${id}`);
 }
