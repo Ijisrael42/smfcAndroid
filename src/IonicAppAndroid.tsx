@@ -48,7 +48,6 @@ import LoginCapacitor from './pages/sidemenu/LoginCapacitor';
 import RegisterCapacitor from './pages/others/RegisterCapacitor';
 import Wallet from './pages/others/Wallet';
 import Card from './pages/others/Card';
-import { onMessageListener } from './helpers/firebase';
 
 const IonicAppAndroid: React.FC = () => {
 
@@ -71,11 +70,26 @@ const IonicAppAndroid: React.FC = () => {
       <data android:scheme="https" android:host="cliqclin.web.app" />
   </intent-filter>
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
+  package com.smfc.tutors;
+  import com.getcapacitor.BridgeActivity;
+  import com.codetrixstudio.capacitor.GoogleAuth.GoogleAuth;
+  import android.os.Bundle;
+  import com.getcapacitor.Plugin;
+  import java.util.ArrayList;
+  import com.capacitorjs.plugins.pushnotifications.PushNotificationsPlugin;
+  import com.capacitorjs.plugins.app.AppPlugin;
+  public class MainActivity extends BridgeActivity {
 
-      registerPlugin(AppPlugin.class);
+      @Override
+      public void onCreate(Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+
+          this.init(savedInstanceState, new ArrayList<Class<? extends Plugin>>() {{
+              add(GoogleAuth.class);
+              add(PushNotificationsPlugin.class);
+              add(AppPlugin.class);
+          }});
+      }
   }
 
  */
@@ -86,7 +100,7 @@ const IonicAppAndroid: React.FC = () => {
     if(!isLatestVersion) emptyCacheStorage();
 
     // Show us the notification payload if the app is open on our device
-    /* if( platform === 'android' || platform === 'ios' ) {
+    if( platform === 'android' || platform === 'ios' ) {
 
       PushNotifications.addListener('pushNotificationReceived',
         (notification: PushNotificationSchema) => {
@@ -104,17 +118,6 @@ const IonicAppAndroid: React.FC = () => {
         }
       );
     } 
-
-    else if( platform === 'web' )*/ 
-    {
-      onMessageListener().then(payload => {
-        toast(
-          <Toast title={payload.data.title} body={payload.data.body} url={payload.data.click_action} />, 
-          { position: toast.POSITION.TOP_CENTER }
-        );
-
-      }).catch(err => toast("Enable Notification") );
-    }
 
   },[]);
 

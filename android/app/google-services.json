@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "920422764087",
+    "firebase_url": "https://test-f2acb.firebaseio.com",
+    "project_id": "test-f2acb",
+    "storage_bucket": "test-f2acb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920422764087:android:30e105137843124daaf9b2",
+        "android_client_info": {
+          "package_name": "com.dev.push"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920422764087-iie1obpjqnm6mroqir8n75l2kba6bf4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCyTRFib1CCOEc3nz9LpXF_444DSdil2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920422764087-iie1obpjqnm6mroqir8n75l2kba6bf4f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "920422764087-ecdfh0iqnqr6rrhqatitik7ucd58a9jd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.smfc.tutors"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920422764087:android:56308290caca6366aaf9b2",
+        "android_client_info": {
+          "package_name": "com.smfc.tutors"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920422764087-iie1obpjqnm6mroqir8n75l2kba6bf4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCyTRFib1CCOEc3nz9LpXF_444DSdil2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920422764087-iie1obpjqnm6mroqir8n75l2kba6bf4f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "920422764087-ecdfh0iqnqr6rrhqatitik7ucd58a9jd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.smfc.tutors"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

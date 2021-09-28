@@ -9,7 +9,7 @@ import { useHistory } from "react-router-dom";
 import { arrowBackOutline, arrowBackSharp} from 'ionicons/icons'; 
 import { config } from '../../helpers/config';
 import { usePlatform } from '@capacitor-community/react-hooks/platform/usePlatform';
-import { messaging } from '../../helpers/firebase';
+// import { messaging } from '../../helpers/firebase';
 
 const Settings: React.FC = () => {
 
@@ -40,10 +40,10 @@ const Settings: React.FC = () => {
   const enable = async () => {
 
     try {
-      const currentToken = await messaging.getToken({ vapidKey: config.vapidKey });
+      /* const currentToken = await messaging.getToken({ vapidKey: config.vapidKey });
       console.log(currentToken);
       if (currentToken) update(currentToken);
-      else { present("Notification was NOT Successful! ", 2000); setShowLoading(false); }
+      else { present("Notification was NOT Successful! ", 2000); setShowLoading(false); } */
     } 
     catch (err) { present("Notification was NOT Successful! ", 2000); setShowLoading(false); }
   }
