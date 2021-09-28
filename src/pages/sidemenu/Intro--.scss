@@ -1,0 +1,36 @@
+ion-title.large-title {
+    color: purple;
+    font-size: xxx-large;
+}
+
+#intro-page {
+
+    h1 {
+        margin: 0;
+    }
+    
+}
+#zmmtg-root {
+    display: none;
+}
+
+.description {
+    h6, p {
+        margin-left: 14px;
+    }
+
+    p {
+        font-size: 13px;
+    }
+
+    border-bottom: 1px solid rgb(219, 207, 207) !important;
+}
+
+#dashboard {
+    div{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-size: 15px;
+        border-bottom: 1px solid #e6e6f2;
+    }
+}
