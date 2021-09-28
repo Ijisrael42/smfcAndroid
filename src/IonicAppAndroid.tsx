@@ -48,6 +48,7 @@ import LoginCapacitor from './pages/sidemenu/LoginCapacitor';
 import RegisterCapacitor from './pages/others/RegisterCapacitor';
 import Wallet from './pages/others/Wallet';
 import Card from './pages/others/Card';
+import SettingsAndroid from './pages/others/SettingsAndroid';
 
 const IonicAppAndroid: React.FC = () => {
 
@@ -164,7 +165,7 @@ const IonicAppAndroid: React.FC = () => {
             <Route path="/profile" exact={true}> <Profile /> </Route>
             <Route path="/profile/:mode" exact={true}> <Profile /> </Route>
             <Route path="/settings" exact={true}> <Settings /> </Route>
-            <Route path="/settings/:mode" exact={true}> <Settings /> </Route>
+            <Route path="/settings/:mode" exact={true}> <SettingsAndroid /> </Route>
             <Route path="/question/:id" exact={true}> <Question /> </Route>
             <Route path="/question/tutor/:id/:status/:bidid/:question_id" exact={true}> <QuestionBid /> </Route>
             <Route path="/question/tutor/:id/:status/:bidid/:question_id/:token" exact={true}> <QuestionBid /> </Route>
