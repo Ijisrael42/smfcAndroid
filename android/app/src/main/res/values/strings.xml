@@ -4,4 +4,5 @@
     <string name="title_activity_main">smfctutors</string>
     <string name="package_name">com.smfc.tutors</string>
     <string name="custom_url_scheme">com.smfc.tutors</string>
+    <string name="server_client_id">920422764087-iie1obpjqnm6mroqir8n75l2kba6bf4f.apps.googleusercontent.com</string>
 </resources>
