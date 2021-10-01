@@ -17,13 +17,14 @@ const TutorDashboard: React.FC = () => {
   const [complete, setComplete] = useState<any>([]);
   const [showLoading, setShowLoading] = useState<any>(true);
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<any>();
+  const [tutor, setTutor] = useState<any>();
 
-  useEffect(() => {
-    const user = accountService.userValue;
-    const tutor = accountService.tutorValue;
+  useEffect( async () => {
+    const user = await accountService.userValue;
+    const tutor = await  accountService.tutorValue;
     setUser(user);
-
+    setTutor(tutor);
     setShowLoading(true);   
 
     questionService.getByCategory({ category: tutor.category})
@@ -45,8 +46,6 @@ const TutorDashboard: React.FC = () => {
 
         });
 
-        console.log("Unbidded");
-        console.log(unbidded);
         setPosted(unbidded);
         setSessions(allList); 
         setScheduled(scheduleList);

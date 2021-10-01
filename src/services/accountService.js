@@ -39,7 +39,7 @@ async function setUser(user){
 
     userSubject.next(user);
     // window.localStorage.setItem( 'user', JSON.stringify(user) );
-    await Storage.set({ key: 'user', value: JSON.stringify(user), });
+    await Storage.set({ key: 'user', value: JSON.stringify(user) });
     startRefreshTokenTimer();
 }
 
@@ -51,7 +51,7 @@ async function setTutor(tutor){
 }
 
 async function switctToUser() {
-    const user = userParse();
+    const user = await userParse();
     user.role = "User";
     userSubject.next(user);
     await Storage.set({ key: 'user', value: JSON.stringify(user), });
@@ -59,7 +59,7 @@ async function switctToUser() {
 }
 
 async function switctToTutor() {
-    const user = userParse();
+    const user = await userParse();
     user.role = "Tutor";
     userSubject.next(user);
     await Storage.set({ key: 'user', value: JSON.stringify(user), });
@@ -82,7 +82,7 @@ function login(email, password) {
 }
 
 async function getJwt() {
-    const user = userParse();
+    const user = await userParse();
 
     if(user) {
 
@@ -139,14 +139,17 @@ async function tutorParse() {
 function logout() {
 
     if( fetchWrapper.isTokenExpired() ) {
+        console.log("First thing")
         removeUserDetails();
         return 'success';
     }
+    
     const user = userParse();
     // revoke token, stop refresh timer, publish null to user subscribers and redirect to login page
-    return fetchWrapper.post(`${baseUrl}/revoke-token`, { token: user.refreshToken}).then( response => {
+    return fetchWrapper.post(`${baseUrl}/revoke-token`, { token: user.refreshToken})
+    .then( response => {
         removeUserDetails();
-        return response;
+        return 'success';
     });
 } 
 

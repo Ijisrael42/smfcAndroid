@@ -90,10 +90,8 @@ const SettingsAndroid: React.FC = () => {
 
   const logout = () => {
     const response:any = accountService.logout();
-    if ( response === 'success' )
-    history.replace('/home');
-
-    response.then(() => history.replace('/home'));
+    if ( response === 'success' ) history.replace('/home');
+    else response.then(() => history.replace('/home'));
   }
 
   const next = () => {

@@ -14,16 +14,17 @@ import { fileService } from '../../services/fileService';
 import { config } from '../../helpers/config';
 import { fieldService } from '../../services/fieldService';
 import { usePlatform } from '@capacitor-community/react-hooks/platform/usePlatform';
+import * as Yup from 'yup';
+import useResolver from '../../helpers/resolver';
 
-const TutorProfile: React.FC = () => {
+const TutorProfile: React.FC<any> = () => {
 
   const { mode } = useParams<any>();
   const [error, setError] = useState("");
   const history = useHistory();
-  const [user, setUser] = useState<any>();
+  const [tutor, setTutor] = useState<any>();
   const [ fields, setFields ] = useState<any>();
-  const tutor = accountService.tutorValue;
-  console.log(tutor)
+
   const [showLoading, setShowLoading] = useState<any>(false);
   const userDetails = accountService.userValue;
   const [present, dismiss] = useIonToast();
@@ -33,21 +34,28 @@ const TutorProfile: React.FC = () => {
   const categories = [{ id: 1, name: 'IT', }, { id: 2, name: 'Multimedia', }, { id: 3, name: 'Physical Science', }, ];
   const { platform } = usePlatform();
 
-  const { control, handleSubmit, errors } = useForm<any>({
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().email().required('Email is required'),
+    description: Yup.string().required('Description is required'),
+    category: Yup.string().required('Category is required'),
+    experience: Yup.string().required('Experience is required'),
+  });
+
+  const { control, handleSubmit, errors, reset } = useForm<any>({
+    resolver: useResolver(validationSchema),
     defaultValues: tutor
   });
 
-  useEffect(() => {
-    setUser(userDetails);
+  useEffect( async () => {
+    const tutor = await accountService.tutorValue;
+    setTutor(tutor);
+    reset(tutor);
 
     fieldService.getAll()
-    .then( response => {
-      console.log(response);
-      setFields(response);
-    })
+    .then( response => { setFields(response); })
     .catch( error => console.log(error) );
-
-  },[]);
+  },[reset]);
 
   const clickUpdate = () => {
     var submitButton = window.document.getElementById("submitForm") as HTMLIonButtonElement;
@@ -168,7 +176,7 @@ const TutorProfile: React.FC = () => {
 
       <IonFooter>
         <IonToolbar>
-          <IonButton className="ion-margin-horizontal" color={config.themeColor} expand="full" onClick={clickUpdate}>
+          <IonButton className="ion-margin-horizontal" color={config.buttonColor} expand="full" onClick={clickUpdate}>
           { ( mode && mode === "registration" ) ? "NEXT" : "UPDATE" }
           </IonButton>
         </IonToolbar>

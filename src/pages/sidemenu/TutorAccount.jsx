@@ -12,21 +12,17 @@ import { useHistory } from 'react-router';
 const TutorAccount = () => {
 
   const history = useHistory();
-  const user = accountService.userValue;
+  const [user, setUser] = useState();
+  useEffect( async () => { setUser( await accountService.userValue); }, []);
   const tutor = accountService.tutorValue;
   const [showLoading, setShowLoading] = useState();
   const [ bankDetails, setBankDetails] = useState(null);
 
   useEffect(() => {
     bankingdetailsService.getBySuplierId(tutor.id)
-    .then( bankdetails => {
-      console.log( bankdetails );
-      setBankDetails(bankdetails);setShowLoading(false);
-    })
+    .then( bankdetails => { console.log( bankdetails ); setBankDetails(bankdetails);setShowLoading(false); })
     .catch( error => { setShowLoading(false); console.log(error);} );
-
   },[]);
-
 
   const payButton = () => {
     var pData = {

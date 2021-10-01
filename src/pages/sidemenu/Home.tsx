@@ -29,14 +29,11 @@ const Home: React.FC = () => {
   const customActionSheetOptions = { header: 'Category', subHeader: 'Select your Category' };
   const dateTime = new Date().toISOString();
 
-  useEffect(() => {
-    setUser(accountService.userValue);
+  useEffect(async () => {
+    setUser(await accountService.userValue);
 
     fieldService.getAll()
-    .then( response => {
-      console.log(response);
-      setFields(response);
-    })
+    .then( response => { console.log(response); setFields(response); })
     .catch( error => console.log(error) );
 
   }, []);
@@ -79,12 +76,8 @@ const Home: React.FC = () => {
     formData.append("file", file);
 
     fileService.upload(formData)
-    .then( response => {
-      console.log(response);
-      postQuestion(data);
-    })
+    .then( response => { console.log(response); postQuestion(data); })
     .catch( error => console.log(error))
-
   };
 
   const createQuestion = (data: any) => {
@@ -108,12 +101,8 @@ const Home: React.FC = () => {
   const postQuestion = (data: any) => {
 
     questionService.create(data)
-    .then( response => {
-      setShowLoading(null);
-      console.log(response);
-      history.push('/question/' + response.id );
-
-    }) .catch( error => {  console.log(error); setError(error); });
+    .then( response => { setShowLoading(null); history.push('/question/' + response.id ); })
+    .catch( error => {  console.log(error); setError(error); });
   };
   
   const submit = () => {

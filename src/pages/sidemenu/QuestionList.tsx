@@ -29,10 +29,7 @@ const QuestionList: React.FC = () => {
     setShowRespondedLoading(false);
   }
 
-  useEffect(() => {
-    setUser(accountService.userValue);
-  }, []);
-
+  useEffect( async () => { setUser( await accountService.userValue); }, []);
   useEffect(() => {
     setShowLoading(true);
 

@@ -29,8 +29,8 @@ const TutorSessions: React.FC = () => {
     setShowCompleteLoading(false);
   };
 
-  useEffect(() => {
-    const user = accountService.userValue;
+  useEffect( async () => {
+    const user = await accountService.userValue;
     setUser(user);
     setShowLoading(true);
 
@@ -39,7 +39,6 @@ const TutorSessions: React.FC = () => {
         let allList:any = [];
         let scheduleList:any = [];
         let completeList:any = [];
-        console.log(questions);
 
         questions.forEach( (question:any) => {
           if( question.status === "Paid" || question.status === "Scheduled" || question.status === "Complete" ) {
@@ -80,20 +79,20 @@ const TutorSessions: React.FC = () => {
               {/* <IonBadge color="primary"></IonBadge> */}
               <IonSegmentButton value="all"> 
                 { (segment === "all") ? 
-                  (<IonChip><IonLabel>ALL ({questions.length})</IonLabel></IonChip>) : 
-                  (<IonLabel  >ALL ({questions.length})</IonLabel>) 
+                  (<IonChip><IonLabel><b>ALL ({questions.length})</b></IonLabel></IonChip>) : 
+                  (<IonLabel  ><b>ALL ({questions.length})</b></IonLabel>) 
                 }
               </IonSegmentButton>
               <IonSegmentButton value="scheduled">
                 { (segment === "scheduled") ? 
-                  (<IonChip> <IonLabel>SCHEDULED ({scheduled.length})</IonLabel></IonChip>)  : 
-                  (<IonLabel  >SCHEDULED ({scheduled.length})</IonLabel>) 
+                  (<IonChip> <IonLabel><b>SCHEDULED ({scheduled.length})</b></IonLabel></IonChip>)  : 
+                  (<IonLabel  ><b>SCHEDULED ({scheduled.length})</b></IonLabel>) 
                 }                
               </IonSegmentButton>
               <IonSegmentButton value="complete">
                 { (segment === "complete") ? 
-                  (<IonChip> <IonLabel> COMPLETE ({complete.length})</IonLabel> </IonChip>)  : 
-                  (<IonLabel> COMPLETE ({complete.length})</IonLabel>) 
+                  (<IonChip> <IonLabel><b> COMPLETE ({complete.length})</b></IonLabel> </IonChip>)  : 
+                  (<IonLabel><b> COMPLETE ({complete.length})</b></IonLabel>) 
                 }
               </IonSegmentButton> 
             </IonSegment>

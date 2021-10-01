@@ -7,7 +7,8 @@ import Home from './pages/sidemenu/Home';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { accountService } from './services/accountService'; 
 
 import Toast from './components/Toast';
 
@@ -49,6 +50,7 @@ import RegisterCapacitor from './pages/others/RegisterCapacitor';
 import Wallet from './pages/others/Wallet';
 import Card from './pages/others/Card';
 import SettingsAndroid from './pages/others/SettingsAndroid';
+import { useAuth } from './AuthContext';
 
 const IonicAppAndroid: React.FC = () => {
 
@@ -63,6 +65,7 @@ const IonicAppAndroid: React.FC = () => {
   classpath 'com.android.tools.build:gradle:4.1.2'
   classpath 'com.google.gms:google-services:4.3.5'
   distributionUrl=https\://services.gradle.org/distributions/gradle-6.5-all.zip
+    <string name="server_client_id">920422764087-iie1obpjqnm6mroqir8n75l2kba6bf4f.apps.googleusercontent.com</string>
 
   <intent-filter android:autoVerify="true">
       <action android:name="android.intent.action.VIEW" />
@@ -96,8 +99,12 @@ const IonicAppAndroid: React.FC = () => {
  */
   const { isLatestVersion, emptyCacheStorage } = useClearCache();
   const { platform } = usePlatform();
+  let { authUser } = useAuth();  
+  const [user, setUser] = useState<any>();
+  const [tutor, setTutor] = useState<any>();
 
-  useEffect(() => {
+  useEffect(async () => {
+
     if(!isLatestVersion) emptyCacheStorage();
 
     // Show us the notification payload if the app is open on our device

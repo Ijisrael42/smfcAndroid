@@ -21,7 +21,6 @@ const Profile: React.FC = () => {
   const history = useHistory();
   const [user, setUser] = useState<any>();
   const [showLoading, setShowLoading] = useState<any>(false);
-  const userDetails = accountService.userValue;
   const [present, dismiss] = useIonToast();
   const [file, setFile] = useState<any>();
   const [fileError, setFileError] = useState("");
@@ -35,16 +34,16 @@ const Profile: React.FC = () => {
     contact_no: Yup.string().required('Contact Number is required'),
   });
 
-  const { control, handleSubmit, errors } = useForm<any>({
+  const { control, handleSubmit, errors, reset } = useForm<any>({
     resolver: useResolver(validationSchema),
-    defaultValues: userDetails
+    defaultValues: user
   });
 
-  useEffect(() => {
-    console.log(userDetails);
+  useEffect( async () => {
+    const userDetails = await accountService.userValue;
     setUser(userDetails);
-
-  },[]);
+    reset(userDetails);
+  },[reset]);
 
   const clickUpdate = () => {
     var submitButton = window.document.getElementById("submitForm") as HTMLIonButtonElement;
@@ -153,11 +152,11 @@ const Profile: React.FC = () => {
                     <IonAvatar>
                       <img 
                       style={ platform === "ios" ? {position: "relative", left: "15px" } : {}}
-                       src={ userDetails.profile_picture ? 
-                      `${config.apiUrl}/files/image/${userDetails.profile_picture}` : config.userIcon }  alt="Speaker profile pic" />
+                       src={ user.profile_picture ? 
+                      `${config.apiUrl}/files/image/${user.profile_picture}` : config.userIcon }  alt="Speaker profile pic" />
 
-                      {/* <img src={ userDetails.profile_picture ? 
-                      `${config.apiUrl}/files/image/${userDetails.profile_picture}` : config.userIcon }  alt="Speaker profile pic" /> */}
+                      {/* <img src={ user.profile_picture ? 
+                      `${config.apiUrl}/files/image/${user.profile_picture}` : config.userIcon }  alt="Speaker profile pic" /> */}
                     </IonAvatar>
                   </IonCol>
                 </IonRow>

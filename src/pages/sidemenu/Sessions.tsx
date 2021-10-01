@@ -21,11 +21,8 @@ const Sessions: React.FC = () => {
   const [showCompleteLoading, setShowCompleteLoading] = useState<any>(true);
 
   const [user, setUser] = useState();
-
-  useEffect(() => {
-    setUser(accountService.userValue);
-  }, []);
-
+  useEffect( async () => { setUser( await accountService.userValue); }, []);
+  
   useEffect(() => {
     setShowLoading(true);
 

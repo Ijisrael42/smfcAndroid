@@ -21,7 +21,6 @@ import Header from "../../components/Header";
 
 const TutorApplication: React.FC = () => {
 
-  const [user, setUser] = useState<any>();
   const [error, setError] = useState("");
   const [ fields, setFields ] = useState<any>();
   const [idPassportFile, setIdPassportFile] = useState<any>(null);
@@ -36,7 +35,9 @@ const TutorApplication: React.FC = () => {
   const [showLoading, setShowLoading] = useState<any>(false);
   const [submit, setSubmit] = useState<any>(false);
   const [showSuccess, setShowSuccess] = useState<any>(false);
-  
+  const [user, setUser] = useState();
+  useEffect( async () => { setUser( await accountService.userValue); }, []);
+ 
   useEffect(() => {
     setUser(accountService.userValue);
     

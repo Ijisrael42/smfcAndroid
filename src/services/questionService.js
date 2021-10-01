@@ -108,5 +108,6 @@ function getByTutorIdUnbidded(id) {
         return accountService.getJwt()
         .then(user => { return fetchWrapper.get(`${baseUrl}/tutor/unbidded/${id}`);});        
     }
+
     return fetchWrapper.get(`${baseUrl}/tutor/unbidded/${id}`);
 }

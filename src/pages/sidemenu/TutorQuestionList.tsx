@@ -22,9 +22,9 @@ const TutorQuestionList: React.FC = () => {
   const [showBidsLoading, setShowBidsLoading] = useState<any>(true);
   const [user, setUser] = useState();
 
-  useEffect(() => {
-    const user = accountService.userValue;
-    const tutor = accountService.tutorValue;
+  useEffect( async () => {
+    const user = await accountService.userValue;
+    const tutor = await accountService.tutorValue;
     setUser(user);
 
     setShowLoading(true);   

@@ -6,6 +6,7 @@ import com.getcapacitor.Plugin;
 import java.util.ArrayList;
 import com.capacitorjs.plugins.pushnotifications.PushNotificationsPlugin;
 import com.capacitorjs.plugins.app.AppPlugin;
+import com.capacitorjs.plugins.storage.StoragePlugin;
 
 public class MainActivity extends BridgeActivity {
 
@@ -17,6 +18,7 @@ public class MainActivity extends BridgeActivity {
             add(GoogleAuth.class);
             add(PushNotificationsPlugin.class);
             add(AppPlugin.class);
+            add(StoragePlugin.class);
         }});
     }
 }

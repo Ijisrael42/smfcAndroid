@@ -11,36 +11,38 @@ export const fetchWrapper = {
     isTokenExpired
 }
 
-function get(url) {
+async function get(url) {
     const requestOptions = {
         method: 'GET',
-        headers: authHeader(url)
+        headers: await authHeader(url)
     };
     return fetch(url, requestOptions).then(handleResponse); 
 }
 
-function post(url, body) {
+async function post(url, body) {
+
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeader(url) },
+        headers: { 'Content-Type': 'application/json', ...await authHeader(url) },
         credentials: 'include',
         body: JSON.stringify(body)
     };
+
     return fetch(url, requestOptions).then(handleResponse);
 
 }
 
-function download(url, body) {
+async function download(url, body) {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf', ...authHeader(url) },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf', ...await authHeader(url) },
         credentials: 'include',
         body: JSON.stringify(body)
     };
     return fetch(url, requestOptions).then(handleResponse);
 }
 
-function file(url, body) {
+async function file(url, body) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(url) },
@@ -49,42 +51,34 @@ function file(url, body) {
     return fetch(url, requestOptions).then(handleResponse);
 }
 
-function put(url, body) {
+async function put(url, body) {
     const requestOptions = {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeader(url) },
+        headers: { 'Content-Type': 'application/json', ...await authHeader(url) },
         body: JSON.stringify(body)
     };
     return fetch(url, requestOptions).then(handleResponse);    
 }
 
 // prefixed with underscored because delete is a reserved word in javascript
-function _delete(url) {
+async function _delete(url) {
     const requestOptions = {
         method: 'DELETE',
-        headers: authHeader(url)
+        headers: await authHeader(url)
     };
     return fetch(url, requestOptions).then(handleResponse);
 }
 
 // helper functions
 
-function authHeader(url) {
+async function authHeader(url) {
     // return auth header with jwt if user is logged in and request is to the api url
-    const user = accountService.userValue;
+    const user = await accountService.userValue;
     const isLoggedIn = user && user.jwtToken;
     //const isApiUrl = url.startsWith(config.apiUrl);
-    if (isLoggedIn ) {//&& isApiUrl) {
-        
-        /* const jwtToken = JSON.parse(atob(user.jwtToken.split('.')[1]));
 
-        // set a timeout to refresh the token a minute before it expires
-        const expires = new Date(jwtToken.exp * 1000);
-        console.log(expires); */
-        return { Authorization: `Bearer ${user.jwtToken}` };
-    } else { 
-        return {};
-    }
+    if (isLoggedIn ) return { Authorization: `Bearer ${user.jwtToken}` }; //&& isApiUrl) {
+    else return {};
 }
 
 /* 
@@ -129,9 +123,9 @@ async function refreshToken() {
     return data;
 }*/
 
-function isTokenExpired() {
+async function isTokenExpired() {
 
-    let user = accountService.userValue;
+    let user = await accountService.userValue;
     // console.log(user);
     
     if( user && user.jwtToken ){
@@ -145,11 +139,13 @@ function isTokenExpired() {
 }
 
 function handleResponse(response) {
-    return response.text().then(text => {
+    return response.text().then( async (text) => {
         const data = text && JSON.parse(text);
         
         if (!response.ok) {
-            if ([401, 403].includes(response.status) && accountService.userValue) {
+            let user = await accountService.userValue;
+
+            if ([401, 403].includes(response.status) && user) {
                 // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
                 // accountService.logout();
             }

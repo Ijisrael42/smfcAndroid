@@ -21,7 +21,7 @@ import './Menu.css';
 import { supplierService } from '../services/supplierService';
 import { accountService } from '../services/accountService';
 import { useAuth } from '../AuthContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { config } from '../helpers/config';
 
 interface AppPage {
@@ -55,10 +55,14 @@ const Menu: React.FC = () => {
   let { user, authUser } = useAuth();  
   const history = useHistory();
   let userType = "";
+  const [userDetails, setUserDetails] = useState<any>();
 
-  if(!user) user = authUser();
-  if( user && user.role === "Tutor" ) userType = "Tutor";
-  else if( user && user.role === "User" ) userType = "User";
+  useEffect( async () => {
+
+    if(!user) user = await authUser();  
+    setUserDetails(user);
+
+  },[]);
 
   const switctToUser = () => {
     accountService.switctToUser();
@@ -85,13 +89,16 @@ const Menu: React.FC = () => {
 
               </IonThumbnail>
               <IonLabel className="ion-no-padding ion-no-margin">
-                <h1><b>SMFC {userType}</b></h1>
+                
+                { ( userDetails && userDetails.role === "Tutor" ) && (<h1><b>SMFC Tutor</b></h1>)}
+                { ( userDetails && userDetails.role === "User" ) && (<h1><b>SMFC User</b></h1>)}
+
                 {/* <IonNote className="ion-no-margin">cliqclin.web.app</IonNote> */}
               </IonLabel>
             </IonItem>
           </div>
 
-          { ( !user || ( user && user.role === "User" ) ) && (
+          { ( !userDetails || ( userDetails && userDetails.role === "User" ) ) && (
               <IonMenuToggle autoHide={false}>
                 <IonItem className={location.pathname === "/home" ? 'selected' : ''} color={location.pathname === "/home" ? config.buttonColor : ''} routerLink="/home" routerDirection="none" lines="none" detail={false}>
                   <IonIcon color={config.iconColor}  slot="start" ios={homeOutline} md={homeSharp} />
@@ -101,7 +108,7 @@ const Menu: React.FC = () => {
             )
           }
 
-          { user && user.role === "User" && appPages.map((appPage, index) => {
+          { userDetails && userDetails.role === "User" && appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
                 <IonItem className={location.pathname === appPage.url ? 'selected' : ''} color={location.pathname === appPage.url ? config.buttonColor : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
@@ -112,7 +119,7 @@ const Menu: React.FC = () => {
             );
           })}
 
-          { user && user.role === "Tutor" && tutorPages.map((appPage, index) => {
+          { userDetails && userDetails.role === "Tutor" && tutorPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
                 <IonItem className={location.pathname === appPage.url ? 'selected' : ''} color={location.pathname === appPage.url ? config.buttonColor : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
@@ -124,7 +131,7 @@ const Menu: React.FC = () => {
           })}
           
           {/* Be a Tutor */}
-          { /* ( !user || ( user && !user.supplier ) ) && */ (
+          { /* ( !userDetails || ( userDetails && !userDetails.supplier ) ) && */ (
               <IonMenuToggle autoHide={false}>
                 <IonItem className={location.pathname === "/tutor-application" ? 'selected' : ''} color={location.pathname === "/tutor-application" ? config.buttonColor : ''} routerLink="/tutor-application" routerDirection="none" lines="none" detail={false}>
                   <IonIcon color={config.iconColor}  slot="start" ios={peopleOutline} md={peopleSharp} />
@@ -155,12 +162,12 @@ const Menu: React.FC = () => {
 
       </IonContent>
 
-      { user && (
+      { userDetails && (
 
         <IonFooter>
           <IonToolbar>
             {/* Switch to User */}
-            { user && user.role === "Tutor" && (
+            { userDetails && userDetails.role === "Tutor" && (
                 <IonMenuToggle autoHide={false}>
                   <IonItem color={config.themeColor}  onClick={switctToUser} routerDirection="none" lines="none" detail={false}>
                     <IonIcon color={config.iconColor} slot="start" ios={personOutline} md={personSharp} />
@@ -171,7 +178,7 @@ const Menu: React.FC = () => {
             }
 
             {/* Switch to Tutor */}
-            { user && user.tutor_id && user.role === "User" && (
+            { userDetails && userDetails.tutor_id && userDetails.role === "User" && (
                 <IonMenuToggle autoHide={false}>
                   <IonItem color={config.themeColor} onClick={switctToTutor} routerDirection="none" lines="none" detail={false}>
                     <IonIcon color={config.iconColor} slot="start" ios={peopleOutline} md={peopleSharp} />

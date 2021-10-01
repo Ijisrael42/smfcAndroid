@@ -11,10 +11,7 @@ import Header from '../../components/Header';
 const Intro: React.FC = () => {
 
   const [user, setUser] = useState();
-
-  useEffect(() => {
-    setUser(accountService.userValue);
-  }, []);
+  useEffect( async () => { setUser(await accountService.userValue); }, []);
 
   return (
     <IonPage>

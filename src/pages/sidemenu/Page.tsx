@@ -10,10 +10,7 @@ const Page: React.FC = () => {
 
   const { name } = useParams<{ name: string; }>();
   const [user, setUser] = useState();
-
-  useEffect(() => {
-    setUser(accountService.userValue);
-  }, []);
+  useEffect( async () => { setUser( await accountService.userValue); }, []);
 
   return (
     <IonPage>
