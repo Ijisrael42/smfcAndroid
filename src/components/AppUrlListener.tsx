@@ -7,7 +7,7 @@ const AppUrlListener: React.FC<any> = () => {
   useEffect(() => {
 
     App.addListener('appStateChange', ({ isActive }) => {
-      // console.log('App state changed. Is active?', isActive);
+      console.log('App state changed. Is active?', isActive);
     });
 
     App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {

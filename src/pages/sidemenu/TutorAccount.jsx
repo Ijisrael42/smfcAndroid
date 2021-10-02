@@ -12,13 +12,17 @@ import { useHistory } from 'react-router';
 const TutorAccount = () => {
 
   const history = useHistory();
-  const [user, setUser] = useState();
-  useEffect( async () => { setUser( await accountService.userValue); }, []);
-  const tutor = accountService.tutorValue;
+  const [user, setUser] = useState({});
+  const [tutor, setTutor] = useState({});
   const [showLoading, setShowLoading] = useState();
   const [ bankDetails, setBankDetails] = useState(null);
 
-  useEffect(() => {
+  useEffect( async () => { 
+    const user = await accountService.userValue;
+    const tutor = await  accountService.tutorValue;
+    setUser( user); 
+    setTutor( tutor); 
+
     bankingdetailsService.getBySuplierId(tutor.id)
     .then( bankdetails => { console.log( bankdetails ); setBankDetails(bankdetails);setShowLoading(false); })
     .catch( error => { setShowLoading(false); console.log(error);} );

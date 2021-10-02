@@ -16,17 +16,15 @@ const TutorDashboard: React.FC = () => {
   const [scheduled, setScheduled] = useState<any>([]);
   const [complete, setComplete] = useState<any>([]);
   const [showLoading, setShowLoading] = useState<any>(true);
-
   const [user, setUser] = useState<any>();
-  const [tutor, setTutor] = useState<any>();
 
   useEffect( async () => {
     const user = await accountService.userValue;
     const tutor = await  accountService.tutorValue;
     setUser(user);
-    setTutor(tutor);
-    setShowLoading(true);   
 
+    setShowLoading(true);   
+    console.log(tutor);
     questionService.getByCategory({ category: tutor.category})
     .then(questionlist => {
 
