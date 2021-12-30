@@ -1,7 +1,7 @@
 import { IonButtons, useIonToast, IonFooter, IonToggle, IonLoading, IonIcon, IonButton, IonBackButton, IonList, IonLabel, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem } from '@ionic/react';
 import { useParams } from 'react-router';
 // import './Intro.scss';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { accountService } from '../../services/accountService'; 
 // import { generateToken } from '../../helpers/firebase';
 import { useHistory } from "react-router-dom";
@@ -17,10 +17,11 @@ const Settings: React.FC = () => {
   const history = useHistory();
   const [showLoading, setShowLoading] = useState<any>(false);
   const [checked, setChecked] = useState(false);
-  const user = accountService.userValue;
+  const user:any = accountService.userValue;
   const [error, setError] = useState("");
   const [present, dismiss] = useIonToast();
   const { platform } = usePlatform();
+  const homeBtn = useRef<any>(null);
 
   useEffect(() => {
     const isToken = ( user && user.device_token !== "" ) ? true : false;
@@ -61,10 +62,8 @@ const Settings: React.FC = () => {
 
   const logout = () => {
     const response:any = accountService.logout();
-    if ( response === 'success' )
-    history.replace('/home');
-
-    response.then(() => history.replace('/home'));
+    if ( response === 'success' ) homeBtn.current.click();
+    else response.then(() =>  homeBtn.current.click());
   }
 
   const next = () => {
@@ -103,6 +102,8 @@ const Settings: React.FC = () => {
             <IonLabel>Wallet</IonLabel>
           </IonItem>
         </div>
+
+        <IonButton ref={homeBtn} routerLink="/home" className="ion-hide" />
 
         <IonLoading
               cssClass='my-custom-class'

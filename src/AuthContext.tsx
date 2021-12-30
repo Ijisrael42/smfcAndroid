@@ -24,7 +24,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     });
   };
 
-  const authUser = async () => { return await accountService.userValue; }; // setUser(accountService.userValue); 
+  const authUser = () => { return accountService.userValue; }; // setUser(accountService.userValue); 
 
   const logIn = (user:any) => {
     return new Promise((resolve) => {

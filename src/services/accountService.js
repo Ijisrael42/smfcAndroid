@@ -36,34 +36,27 @@ export const accountService = {
 }; 
 
 async function setUser(user){
-
     userSubject.next(user);
-    // window.localStorage.setItem( 'user', JSON.stringify(user) );
     await Storage.set({ key: 'user', value: JSON.stringify(user) });
-    startRefreshTokenTimer();
 }
 
 async function setTutor(tutor){
-
     tutorSubject.next(tutor);
-    // window.localStorage.setItem( 'tutor', JSON.stringify(tutor) );
     await Storage.set({ key: 'tutor', value: JSON.stringify(tutor), });
 }
 
 async function switctToUser() {
     const user = await userParse();
     user.role = "User";
-    userSubject.next(user);
-    await Storage.set({ key: 'user', value: JSON.stringify(user), });
-    // window.localStorage.setItem( 'user', JSON.stringify(user) );
+    setUser(user);
+    return user;
 }
 
 async function switctToTutor() {
     const user = await userParse();
     user.role = "Tutor";
-    userSubject.next(user);
-    await Storage.set({ key: 'user', value: JSON.stringify(user), });
-    // window.localStorage.setItem( 'user', JSON.stringify(user) );
+    setUser(user);
+    return user;
 }
 
 function login(email, password) {
@@ -123,17 +116,14 @@ function getWithTutorId(id) {
 }
 
 async function userParse() { 
-
     const { value } = await Storage.get({ key: 'user' });
     return JSON.parse( value ); 
-    // return JSON.parse( window.localStorage.getItem('user') ); 
 }
 
 async function tutorParse() { 
 
     const { value } = await Storage.get({ key: 'tutor' });
     return JSON.parse( value ); 
-    // return JSON.parse( window.localStorage.getItem('tutor') ); 
 }
 
 function logout() {
@@ -158,8 +148,6 @@ async function removeUserDetails() {
     userSubject.next(null);
     await Storage.remove({ key: 'user' });
     await Storage.remove({ key: 'tutor' });
-    // window.localStorage.removeItem('user');
-    // window.localStorage.removeItem('tutor');
 }
 
 function refreshToken() {

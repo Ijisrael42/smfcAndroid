@@ -1,11 +1,11 @@
-import { IonChip, IonButton, IonFooter, IonLoading, IonList, IonLabel, IonSegment, IonSegmentButton, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonItem, IonFab, IonFabButton, IonIcon, IonAvatar } from '@ionic/react';
+import { IonChip, IonButton, IonFooter, IonLoading, IonList, IonLabel, IonSegment, IonSegmentButton, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonItem, IonFab, IonFabButton, IonIcon, IonAvatar, IonFabList } from '@ionic/react';
 // import '../others/Page.css';
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { questionService } from '../../services/questionService';
 import { accountService } from '../../services/accountService'; 
 import SkeletonLoader from "../../components/SkeletonLoader";
-import { addCircleOutline, addCircleSharp } from 'ionicons/icons';
+import { addCircleOutline, addCircleSharp, bodyOutline, bodySharp, logoFacebook, logoInstagram, logoTwitter, logoVimeo, sendOutline, sendSharp } from 'ionicons/icons';
 import { config } from '../../helpers/config';
 import Header from '../../components/Header';
 
@@ -29,43 +29,49 @@ const QuestionList: React.FC = () => {
     setShowRespondedLoading(false);
   }
 
-  useEffect( async () => { setUser( await accountService.userValue); }, []);
   useEffect(() => {
-    setShowLoading(true);
 
-    const user = accountService.userValue;
-    console.log(user);
-    questionService.getByUserId(user.id)
-    .then( questions => {
-        let respondedList:any = [];
-        let pendingList:any = [];
-        console.log(questions);
+    ( async () => { 
+    
+      setShowLoading(true);
+      const user = await accountService.userValue;
+      console.log(user);
+      setUser(user);
+  
+      questionService.getByUserId(user.id)
+      .then( questions => {
+          let respondedList:any = [];
+          let pendingList:any = [];
+          console.log(questions);
+  
+          questions.forEach( (question:any) => {
+            if( question.status === "Responded" ) respondedList.push(question);
+            else if( question.status === "Submitted" ) pendingList.push(question);
+          })
+  
+          setQuestions(questions); 
+          setResponded(respondedList);
+          setPending(pendingList);
+          loaderOff();
+      }).catch( error => {
+          console.log(error);
+          loaderOff();
+      });
+    })();
+    
 
-        questions.forEach( (question:any) => {
-          if( question.status === "Responded" ) respondedList.push(question);
-          else if( question.status === "Submitted" ) pendingList.push(question);
-        })
-
-        setQuestions(questions); 
-        setResponded(respondedList);
-        setPending(pendingList);
-        loaderOff();
-    }).catch( error => {
-        console.log(error);
-        loaderOff();
-    });
 
   }, []);
 
   return (
     <IonPage>
 
-      <Header name="Questions" user={user} />
+      <Header name="My Questions" user={user} />
 
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Questions</IonTitle>
+            <IonTitle size="large">My Questions</IonTitle>
           </IonToolbar>
         </IonHeader>
 
@@ -174,9 +180,15 @@ const QuestionList: React.FC = () => {
 
         </div>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton color={config.buttonColor} routerLink="/home">
+          <IonFabButton color={config.buttonColor} >
             <IonIcon ios={addCircleOutline} md={addCircleSharp} />
           </IonFabButton>
+          <IonFabList side="top">
+            <IonFabButton routerLink="/home"><IonIcon ios={sendOutline} md={sendSharp} /></IonFabButton>
+          </IonFabList>
+          <IonFabList side="start">
+            <IonFabButton routerLink="/select_tutor"><IonIcon ios={bodyOutline} md={bodySharp}  /></IonFabButton>
+          </IonFabList>
         </IonFab>
 
       </IonContent>

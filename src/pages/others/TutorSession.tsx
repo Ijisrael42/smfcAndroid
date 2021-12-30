@@ -1,4 +1,4 @@
-import { IonButtons, IonBadge, IonLoading, IonText, IonBackButton, IonLabel, IonSegment, IonSegmentButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonButton, IonChip, IonTextarea, IonList, IonCol, IonRow, IonGrid } from '@ionic/react';
+import { IonButtons, IonBadge, IonLoading, IonText, IonBackButton, IonLabel, IonSegment, IonSegmentButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonButton, IonChip, IonTextarea, IonList, IonCol, IonRow, IonGrid, IonFooter, useIonPopover } from '@ionic/react';
 import { useHistory, useParams, useLocation } from 'react-router';
 // import './Intro.scss';
 import React, { useState, useEffect } from "react";
@@ -14,6 +14,7 @@ import { RatingView, Rating } from 'react-simple-star-rating'
 import { useForm } from 'react-hook-form';
 import Input from '../../components/Input';
 import { usePlatform } from '@capacitor-community/react-hooks/platform/usePlatform';
+import PopoverReport from '../../components/PopoverReport';
 
 const Session: React.FC = () => {
 
@@ -22,6 +23,8 @@ const Session: React.FC = () => {
   const {state} = useLocation<any>();
   const { id, status } = useParams<any>();// {}//useParams();
   const { email } = accountService.userValue;
+  const isOnline = navigator.onLine;
+  const [present, dismiss] = useIonPopover(PopoverReport, { onHide: () => dismiss() });
 
   const [showLoading, setShowLoading] = useState(true);
   const [filetype, setFiletype] = useState("");
@@ -106,7 +109,7 @@ const Session: React.FC = () => {
         { question && 
           (
             <div className="">
-              
+              { !isOnline && (<IonItem color="danger"><IonText>You are currently Offline</IonText></IonItem>) }
               <IonItem lines="full">
                 <IonLabel>
                   <h2 style={{ fontSize: "18px" }}>{question.title}</h2>
@@ -208,6 +211,7 @@ const Session: React.FC = () => {
 
              <div style={ segment === 'rating' ? {}: { display: 'none' } }>
               {/* { ( question.customer_comment || question.customer_rating_tutor ) && ( */}
+
                 <div> 
                   <IonItem lines="full"> 
                     <IonLabel> <h2>Rating for Tutor</h2> </IonLabel> 
@@ -215,6 +219,7 @@ const Session: React.FC = () => {
                   </IonItem>
                   <IonItem lines="full"> <br/>Comments<br/><br/>{question.customer_comment} </IonItem>
                 </div>
+                
               {/* )} */}
 
               { ( question.tutor_comment || question.tutor_rating_customer) ?
@@ -236,7 +241,15 @@ const Session: React.FC = () => {
                     <IonButton type="submit" color={config.themeColor} expand="block" className="ion-margin">SUBMIT</IonButton>
                   </form>
                 )
-            }             
+              }    
+
+              <IonFooter>
+                <IonToolbar>
+                  <IonButton color="danger" onClick={(e) => present({ event: e.nativeEvent,}) }
+                   expand="block" className="ion-margin"> 
+                  Report </IonButton>                
+                </IonToolbar>
+              </IonFooter>         
             </div>
 
 

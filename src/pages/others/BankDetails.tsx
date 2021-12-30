@@ -114,7 +114,7 @@ const BankDetails: React.FC = () => {
       
       <IonFooter>
         <IonToolbar>
-          <IonButton className="ion-margin-horizontal" color={config.themeColor} expand="full" onClick={clickUpdate}>
+          <IonButton className="ion-margin-horizontal" color={config.buttonColor} expand="full" onClick={clickUpdate}>
           { ( id && ( id === "create" ) ) ? "CREATE" : "UPDATE" } ACCOUNT
           </IonButton>
         </IonToolbar>

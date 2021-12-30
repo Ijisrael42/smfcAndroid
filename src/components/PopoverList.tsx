@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 const PopoverList: React.FC<{ onHide: () => void; }> = ({ onHide }) => {
   
   const [user, setUser] = useState<any>();
-  useEffect(async () => { setUser(await accountService.userValue); },[]);
+  useEffect( () => { ( async () => setUser(await accountService.userValue) )(); },[]);
 
   return (<IonList>
     { user && user.role === "Tutor" ? (

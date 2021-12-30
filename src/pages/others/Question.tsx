@@ -20,7 +20,7 @@ const Question: React.FC = () => {
   const {state} = useLocation<any>();
   const history = useHistory();
   const [showLoading, setShowLoading] = useState(true);
-  const [filetype, setFiletype] = useState("");
+  const [files, setFiles] = useState([]);
   const [field, setField] = useState<any>({});
   // const [enableNotifications, setEnableNotifications] = useState(false);
   const [showTutorLoading, setShowTutorLoading] = useState<any>(true);
@@ -29,17 +29,20 @@ const Question: React.FC = () => {
   useEffect(() => {
 
     if(state) {
-      setCategory(state.category);
+      if(state.category) setCategory(state.category);
+      if(state.image_name) setFiles(state.image_name.split(','));
+
       setQuestion(state);
-      if(state.image_name) setFiletype(state.image_name.split('.').pop());
+      
       setShowLoading(false);
     }
     else {
       questionService.getById(id)
       .then( question => {
-        setCategory(question.category);
+        if(question.category) setCategory(question.category);
+        if(question.image_name) setFiles(question.image_name.split(','));
+
         setQuestion(question);
-        if(question.image_name) setFiletype(question.image_name.split('.').pop());
         setShowLoading(false);
       })
       .catch( error =>  {
@@ -133,12 +136,12 @@ const Question: React.FC = () => {
                   <IonItem>
                       <IonLabel>Category</IonLabel><IonText slot="end"><p>{field.name}</p></IonText>
                   </IonItem>                  
-                  { question.image_name && (
-                    <IonItem>
-                      <IonText >{question.image_name}</IonText>
-                      <IonButton slot="end" href={`${config.apiUrl}/files/image/${question.image_name}`} > VIEW DOC </IonButton> 
+                  { files && files.map( (file: any, key:any) =>  (
+                    <IonItem key={key}>
+                      <IonText >{file}</IonText>
+                      <IonButton slot="end" href={`${config.apiUrl}/files/image/${file}`} > VIEW DOC </IonButton> 
                     </IonItem>
-                  )} 
+                  ))}                  
                 </IonList>
               </div>
 

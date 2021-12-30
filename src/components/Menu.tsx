@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonContent,
   IonFooter,
   IonIcon,
@@ -16,20 +17,15 @@ import {
 } from '@ionic/react';
 
 import { useHistory, useLocation } from 'react-router-dom';
-import { walletOutline, walletSharp, helpCircleOutline, carOutline, carSharp, helpCircleSharp, clipboardOutline, clipboardSharp, peopleOutline, peopleSharp, personOutline, personSharp, gitPullRequestOutline, gitPullRequestSharp, createSharp, createOutline, informationCircleOutline, logInOutline, logInSharp, callOutline, callSharp, informationCircleSharp, homeOutline, homeSharp, bookmarkOutline, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp, listOutline, listSharp, openOutline, openSharp, videocamOutline, videocamSharp, bulbSharp, bulbOutline } from 'ionicons/icons';
+import { walletOutline, walletSharp, helpCircleOutline, carOutline, carSharp, helpCircleSharp, clipboardOutline, clipboardSharp, peopleOutline, peopleSharp, personOutline, personSharp, gitPullRequestOutline, gitPullRequestSharp, createSharp, createOutline, informationCircleOutline, logInOutline, logInSharp, callOutline, callSharp, informationCircleSharp, homeOutline, homeSharp, bookmarkOutline, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp, listOutline, listSharp, openOutline, openSharp, videocamOutline, videocamSharp, bulbSharp, bulbOutline, sendSharp, sendOutline, bodyOutline, bodySharp } from 'ionicons/icons';
 import './Menu.css';
 import { supplierService } from '../services/supplierService';
 import { accountService } from '../services/accountService';
 import { useAuth } from '../AuthContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { config } from '../helpers/config';
 
-interface AppPage {
-  url: string;
-  iosIcon: string;
-  mdIcon: string;
-  title: string;
-}
+interface AppPage { url: string; iosIcon: string; mdIcon: string; title: string; }
 
 const standardPages: AppPage[] = [
   { title: 'About Us', url: '/page/About Us', iosIcon: informationCircleOutline, mdIcon: informationCircleSharp },
@@ -46,6 +42,7 @@ const tutorPages: AppPage[] = [
 ];
 
 const appPages: AppPage[] = [
+  { title: 'Select Tutor', url: '/select_tutor', iosIcon: bodyOutline, mdIcon: bodySharp },
   { title: 'My Questions', url: '/questions', iosIcon: helpCircleOutline, mdIcon: helpCircleSharp },
   { title: 'Sessions', url: '/sessions', iosIcon: videocamOutline, mdIcon: videocamSharp },
 ];
@@ -56,22 +53,25 @@ const Menu: React.FC = () => {
   const history = useHistory();
   let userType = "";
   const [userDetails, setUserDetails] = useState<any>();
+  const homeBtn = useRef<any>(null);
+  const tutorBtn = useRef<any>(null);
 
-  useEffect( async () => {
-
-    if(!user) user = await authUser();  
-    setUserDetails(user);
-
+  useEffect( () => { 
+    ( async () => {
+      user = await authUser();  
+      console.log(user);
+      setUserDetails(user); 
+    })();
   },[]);
 
-  const switctToUser = () => {
-    accountService.switctToUser();
-    history.push("/home");
+  const switctToUser = async () => {
+    await accountService.switctToUser();
+    homeBtn.current.click();
   };
 
-  const switctToTutor = () => {
-    accountService.switctToTutor();
-    history.push("/tutor");
+  const switctToTutor = async () => {
+    await accountService.switctToTutor();
+    tutorBtn.current.click();
   };
 
   return (
@@ -89,9 +89,10 @@ const Menu: React.FC = () => {
 
               </IonThumbnail>
               <IonLabel className="ion-no-padding ion-no-margin">
-                
-                { ( userDetails && userDetails.role === "Tutor" ) && (<h1><b>SMFC Tutor</b></h1>)}
-                { ( userDetails && userDetails.role === "User" ) && (<h1><b>SMFC User</b></h1>)}
+                <h1><b>SMFC 
+                { ( userDetails && userDetails.role === "Tutor" ) && ( " Tutor")}
+                { ( userDetails && userDetails.role === "User" ) && (" User")}
+                </b></h1>
 
                 {/* <IonNote className="ion-no-margin">cliqclin.web.app</IonNote> */}
               </IonLabel>
@@ -101,8 +102,8 @@ const Menu: React.FC = () => {
           { ( !userDetails || ( userDetails && userDetails.role === "User" ) ) && (
               <IonMenuToggle autoHide={false}>
                 <IonItem className={location.pathname === "/home" ? 'selected' : ''} color={location.pathname === "/home" ? config.buttonColor : ''} routerLink="/home" routerDirection="none" lines="none" detail={false}>
-                  <IonIcon color={config.iconColor}  slot="start" ios={homeOutline} md={homeSharp} />
-                  <IonLabel>Home</IonLabel>
+                  <IonIcon color={config.iconColor}  slot="start" ios={sendOutline} md={sendSharp} />
+                  <IonLabel>Post A Question</IonLabel>
                 </IonItem>
               </IonMenuToggle>
             )
@@ -159,6 +160,9 @@ const Menu: React.FC = () => {
             );
           })}
         </IonList>
+
+        <IonButton ref={homeBtn} routerLink="/home" className="ion-hide" />
+        <IonButton ref={tutorBtn} routerLink="/tutor" className="ion-hide" />
 
       </IonContent>
 

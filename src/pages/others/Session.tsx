@@ -22,6 +22,7 @@ const Session: React.FC = () => {
   const {state} = useLocation<any>();
   const { id, status } = useParams<any>();// {}//useParams();
   const { email } = accountService.userValue;
+  const isOnline = navigator.onLine;
 
   const history = useHistory();
   const [showLoading, setShowLoading] = useState(true);

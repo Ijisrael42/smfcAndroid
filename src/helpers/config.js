@@ -1,6 +1,6 @@
 export const config = {
-    apiUrldev : "http://localhost:4000",
-    apiUrl : "https://peaceful-crag-55555.herokuapp.com",
+    apiUrl : "http://localhost:4000",
+    apiUrldev : "https://peaceful-crag-55555.herokuapp.com",
     appUrl : "https://smfcmobi.web.app",
     appUrlAlt : "http://localhost:8100",
     appUrldev : "http://127.0.0.1:8100",

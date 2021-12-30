@@ -1,6 +1,6 @@
 import {
   IonContent, IonPage, IonHeader, IonToolbar, IonTitle, IonText, IonTextarea, IonItemGroup, IonSelect, IonSelectOption, IonButton, IonLoading,
-  IonItem, IonLabel, IonDatetime, IonFooter,
+  IonItem, IonLabel, IonDatetime, IonFooter, IonRow, IonIcon, IonCol, IonGrid, IonSearchbar, IonList, IonAvatar, IonCheckbox, IonRadio, IonRadioGroup,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 
@@ -13,12 +13,15 @@ import { useHistory } from "react-router-dom";
 import { accountService } from '../../services/accountService'; 
 import { fieldService } from '../../services/fieldService'; 
 import { fileService } from '../../services/fileService'; 
+import { tutorService } from '../../services/tutorService'; 
 import Header from "../../components/Header";
 import { config } from "../../helpers/config";
+import SkeletonLoader from "../../components/SkeletonLoader";
 
-const Home: React.FC = () => {
+const SelectTutor: React.FC = () => {
 
   const [user, setUser] = useState<any>();
+  const [tutors, setTutors] = useState<any>([]);
   const [error, setError] = useState("");
   const [file, setFile] = useState<any>();
   const [textArea, setTextArea] = useState<any>();
@@ -32,22 +35,33 @@ const Home: React.FC = () => {
   const categories = [ { id: 1, name: 'IT', }, { id: 2, name: 'Multimedia', }, { id: 3, name: 'Physical Science', }, ];
   const customActionSheetOptions = { header: 'Category', subHeader: 'Select your Category' };
   const dateTime = new Date().toISOString();
+  const [segment, setSegment] = useState('search');
+  const [searchText, setSearchText] = useState('');
+  const [selected, setSelected] = useState();
+  const [showAllLoading, setShowAllLoading] = useState<any>(true);
 
-  useEffect(() => {
-    ( async () => {setUser(await accountService.userValue);})();
+  useEffect( () => {
+    ( async () => setUser(await accountService.userValue))();
     setWordCount(minWordCount);
+
+    tutorService.getAll()
+    .then( response => { 
+      let result = response.filter( (tutor: any) => tutor.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1);
+      setTutors(result); 
+      console.log(result); 
+      setShowAllLoading(false); 
+
+    }).catch( error => { console.log(error); setShowAllLoading(false); });
 
     fieldService.getAll()
     .then( response => { console.log(response); setFields(response); })
     .catch( error => console.log(error) );
 
-  }, []);
+  }, [searchText]);
 
   const validationSchema = object().shape({
       title: string().required(),
       date_time: string().required(),
-      // description: string().required().min(25),
-      category: string().required(),
       budget: number().required("Budget is required.").min(200),
       hours: number().required("Number of hours is required.").min(1),
   });
@@ -101,13 +115,13 @@ const Home: React.FC = () => {
 
   const createQuestion = (data: any) => {
     
-      if( wordCount !== 0 ) {
-        setTextAreaError(`Minimum words: ${minWordCount}`)
-        return;
-      }
+    if( wordCount !== 0 ) {
+      setTextAreaError(`Minimum words: ${minWordCount}`)
+      return;
+    }
 
-      setShowLoading(true);
-      setError(""); 
+    setShowLoading(true);
+    setError(""); 
       let date = new Date(data.date_time).toString().split(" GMT")[0];
       date = date.slice(0, date.length - 3);
       data.no_of_hours = data.hours;
@@ -136,23 +150,43 @@ const Home: React.FC = () => {
     submitButton.click();
   };
 
-  // Design Pattern: Flyweight design pattern for solving the arrays list of a books on the bookshelf. To ensure that the list is kept in record on the system. 
-
   return (
     <IonPage>
 
-      <Header name="Post A Question" user={user} />
+      <Header name="Select Tutor" user={user} />
 
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Post A Question</IonTitle>
+            <IonTitle size="large">Select Tutor</IonTitle>
           </IonToolbar>
         </IonHeader>
         
-        <div className="ion-padding">
+        <div style={ segment === 'search' ?  {} : { display: 'none' }} className="ion-padding">
+          <IonSearchbar value={searchText} onIonChange={e => setSearchText(e.detail.value!)} placeholder="Type Tutor Name ..." animated showCancelButton="focus" cancelButtonText="Custom Cancel"></IonSearchbar>
+
+          <IonItem lines="full"><IonText color="muted"> <h6 style={{ margin: "0px"}}><b>Tutors</b></h6> </IonText></IonItem>
+          <IonList className="ion-no-padding">
+            <IonRadioGroup value={selected} onIonChange={e => setSelected(e.detail.value)}>
+              { tutors.length > 0 && ( tutors.map((tutor:any) => (
+                <IonItem className="ion-no-padding" lines="full" key={tutor.id} onClick={ (e) => { }} >
+                  <IonAvatar slot="start"><img src={`${config.userIcon}`} alt="Speaker profile pic" /></IonAvatar>
+                  <IonLabel>
+                    <h2>{tutor.name}</h2>
+                    <h6 style={{ opacity: ".5" }}>{tutor.category}</h6>
+                  </IonLabel>
+                  <IonRadio slot="end" value={tutor.id} />
+                </IonItem>                          
+              )))}
+              { !showAllLoading && !tutors.length && (<IonItem>No item Available</IonItem>)}
+              {showAllLoading && (<SkeletonLoader />) }
+
+            </IonRadioGroup>
+          </IonList>
+        </div>
+
+        <div style={ segment === 'form' ?  {} : { display: 'none' }} className="ion-padding">
           { error && (<p style={{ textAlign: "center", color: "red"}} >{error}</p>) }
-          {/* <IonText color="muted"> <h3 style={{ margin: "0px"}}>Post A Question</h3> </IonText> */}
 
           <form onSubmit={handleSubmit(createQuestion)}>  
             <Input name="title" label="Title" control={control} errors={errors} placeholder="COS 212 Assignment 1"  />
@@ -165,21 +199,7 @@ const Home: React.FC = () => {
                 <small><span > {textAreaError}</span></small>
               </IonText>
             )}
-            <IonItem>
-              <IonLabel position="floating"> <b>Category</b> </IonLabel>
-              <Controller control={control} name="category" defaultValue=""
-                render={({ onChange, onBlur, value }:any) => 
-                  (  
-                  <IonSelect interfaceOptions={customActionSheetOptions} interface="action-sheet" placeholder="Select One"
-                    onIonChange={onChange}
-                    >
-                      {fields && fields.map( (field:any) => (
-                          <IonSelectOption key={field.id} value={field.id}>{field.name}</IonSelectOption>
-                      ))}
-                    </IonSelect>
-                )}                
-              />
-            </IonItem>
+            
             {errors && errors.category && (
               <IonText color="danger" className="ion-padding-start">
                 <small><span role="alert" id={`categoryError`}> {errors.category.message}</span></small>
@@ -207,7 +227,7 @@ const Home: React.FC = () => {
             </IonItemGroup>
             <IonButton id="submitButton" type="submit" className="ion-margin ion-hide"></IonButton> 
           </form>
-
+          
         </div>
 
         <IonLoading
@@ -220,16 +240,29 @@ const Home: React.FC = () => {
         />
       </IonContent>
 
-      <IonFooter>
+      <IonFooter>        
         <IonToolbar>
-          { user ? (<IonButton onClick={submit} color={config.buttonColor} expand="block" className="ion-margin-horizontal"> Submit </IonButton> ) 
-          : (<IonButton color={config.buttonColor} routerLink="/register" expand="block" className="ion-margin-horizontal"> Sign Up to Submit </IonButton>
-          )}          
+        { ( segment === "search" ) ? 
+          ( <IonButton disabled={ selected ? false : true } color={config.buttonColor} onClick={(e) => setSegment("form") }
+          expand="block" className="ion-margin"> NEXT </IonButton> )
+          :
+          ( <IonGrid>
+              <IonRow>
+                <IonCol size="6">
+                  <IonButton expand="block" color="light" onClick={(e) => setSegment("search") }
+                  > PREVIOUS </IonButton>
+                </IonCol>
+                <IonCol size="6">
+                  <IonButton onClick={submit} color={config.buttonColor} expand="block" > Submit </IonButton>                
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          )}
         </IonToolbar>
-      </IonFooter>
+      </IonFooter>        
 
     </IonPage>
   );
 };
 
-export default Home;
+export default SelectTutor;

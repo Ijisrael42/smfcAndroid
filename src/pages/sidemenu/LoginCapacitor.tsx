@@ -1,5 +1,5 @@
 import { IonContent, IonPage, IonHeader, IonToolbar, IonTitle, IonButton, IonInput, IonButtons, IonBackButton, IonLoading, IonMenuButton, } from "@ionic/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Input from "../../components/Input";
 import { object, string } from "yup";
@@ -22,6 +22,8 @@ const LoginCapacitor: React.FC = () => {
   const [error, setError] = useState("");
   const [showLoading, setShowLoading] = useState<any>(false);
   const { logIn } = useAuth();
+  const homeBtn = useRef<any>(null);
+  const tutorBtn = useRef<any>(null);
   
   const validationSchema = object().shape({
       email: string().required(),
@@ -43,10 +45,9 @@ const LoginCapacitor: React.FC = () => {
     .then((user) => {
         // console.log(user);
       logIn(user);
-      let strLocation = '';
 
-      if( user && user.role === "User" ) history.push("/home");
-      else if(user && user.role === "Tutor" ) history.push("/tutor");
+      if( user && user.role === "User" ) homeBtn.current.click();
+      else if(user && user.role === "Tutor" ) tutorBtn.current.click();
 
     })
     .catch(error => {
@@ -65,9 +66,9 @@ const LoginCapacitor: React.FC = () => {
       .then((user) => {
           logIn(user);
     
-          if( user && user.role === "User" ) history.push("/home");
-          else if(user && user.role === "Tutor" ) history.push("/tutor");
-    
+          if( user && user.role === "User" ) homeBtn.current.click();
+          else if(user && user.role === "Tutor" ) tutorBtn.current.click();
+        
       }).catch(error => {  setShowLoading(false); });
     } 
   };
@@ -106,6 +107,13 @@ const LoginCapacitor: React.FC = () => {
             </IonButton>
           </form>
 
+          <IonButton routerLink="/register" color="secondary" expand="block" className="ion-margin-top">
+            SIGN UP
+          </IonButton>
+
+          <IonButton ref={homeBtn} routerLink="/home" className="ion-hide" />
+          <IonButton ref={tutorBtn} routerLink="/tutor" className="ion-hide" />
+
           <IonLoading
               cssClass='my-custom-class'
               isOpen={showLoading}
@@ -114,10 +122,6 @@ const LoginCapacitor: React.FC = () => {
               message={'Please wait...'}
               duration={5000}
           />
-
-          <IonButton routerLink="/register" color="secondary" expand="block" className="ion-margin-top">
-            SIGN UP
-          </IonButton>
 
           </div>
       </IonContent>

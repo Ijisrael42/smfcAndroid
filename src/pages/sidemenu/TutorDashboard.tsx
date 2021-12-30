@@ -18,44 +18,50 @@ const TutorDashboard: React.FC = () => {
   const [showLoading, setShowLoading] = useState<any>(true);
   const [user, setUser] = useState<any>();
 
-  useEffect( async () => {
-    const user = await accountService.userValue;
-    const tutor = await  accountService.tutorValue;
-    setUser(user);
-
-    setShowLoading(true);   
-    console.log(tutor);
-    questionService.getByCategory({ category: tutor.category})
-    .then(questionlist => {
-
-      bidService.getByTutorId(user.tutor_id)
-      .then( bidlist => { 
-        setBids(bidlist);
+  useEffect( () => {
+    ( async () => {
+      const user = await accountService.userValue;
+      const tutor = await  accountService.tutorValue;
+      setUser(user);
   
-        let allList:any = [], scheduleList:any = [], completeList:any = [], unbidded:any = [];
+      setShowLoading(true);   
+      console.log(tutor);
+      questionService.getByCategory({ category: tutor.category})
+      .then( async (questionlist) => {
 
-        const bidQuestions = bidlist.map( (bid:any) => bid.question_id );
-        questionlist.forEach( (question:any) => {
-          if( bidQuestions.indexOf(question.id) === -1 ) unbidded.push(question);
+        const questions = await questionService.getByVariable({ tutor_id: tutor.id, status: "Submitted"});
+        questionlist = [ ...questions,...questionlist ];
 
-          if( question.status === "Paid" || question.status === "Completed" ) allList.push(question);
-          if( question.status === "Paid" ) scheduleList.push(question);
-          else if( question.status === "Completed" ) completeList.push(question);
+        bidService.getByTutorId(user.tutor_id)
+        .then( bidlist => { 
+          setBids(bidlist);
+    
+          let allList:any = [], scheduleList:any = [], completeList:any = [], unbidded:any = [];
+  
+          const bidQuestions = bidlist.map( (bid:any) => bid.question_id );
+          questionlist.forEach( (question:any) => {
+            if( bidQuestions.indexOf(question.id) === -1 ) unbidded.push(question);
+  
+            if( question.status === "Paid" || question.status === "Completed" ) allList.push(question);
+            if( question.status === "Paid" ) scheduleList.push(question);
+            else if( question.status === "Completed" ) completeList.push(question);
+  
+          });
+  
+          setPosted(unbidded);
+          setSessions(allList); 
+          setScheduled(scheduleList);
+          setComplete(completeList);
+          setShowLoading(false);
+        }); 
+  
+        setQuestions(questionlist); 
+  
+      }).catch(err => setShowLoading(false) );
+  
+    })();
 
-        });
-
-        setPosted(unbidded);
-        setSessions(allList); 
-        setScheduled(scheduleList);
-        setComplete(completeList);
-        setShowLoading(false);
-      }); 
-
-      setQuestions(questionlist); 
-
-    }).catch(err => setShowLoading(false) );
-
-  }, []);
+  },[]);
 
   return (
     <IonPage>

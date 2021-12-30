@@ -51,6 +51,7 @@ import Wallet from './pages/others/Wallet';
 import Card from './pages/others/Card';
 import SettingsAndroid from './pages/others/SettingsAndroid';
 import { useAuth } from './AuthContext';
+import SelectTutor from './pages/sidemenu/SelectTutor';
 
 const IonicAppAndroid: React.FC = () => {
 
@@ -103,7 +104,7 @@ const IonicAppAndroid: React.FC = () => {
   const [user, setUser] = useState<any>();
   const [tutor, setTutor] = useState<any>();
 
-  useEffect(async () => {
+  useEffect( () => {
 
     if(!isLatestVersion) emptyCacheStorage();
 
@@ -148,6 +149,7 @@ const IonicAppAndroid: React.FC = () => {
 
             {/* Side Menu Navigation */}
             <Route path="/home" component={Home} exact={true} />
+            <Route path="/select_tutor" component={SelectTutor} exact={true} />
             <Route path="/intro" component={Intro} exact={true} />
             <Route path="/login" component={LoginCapacitor} exact={true} />
             {/* <Route path="/map" component={MapView} exact={true} /> */}

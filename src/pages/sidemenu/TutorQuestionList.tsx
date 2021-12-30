@@ -22,39 +22,44 @@ const TutorQuestionList: React.FC = () => {
   const [showBidsLoading, setShowBidsLoading] = useState<any>(true);
   const [user, setUser] = useState();
 
-  useEffect( async () => {
-    const user = await accountService.userValue;
-    const tutor = await accountService.tutorValue;
-    setUser(user);
+  useEffect( () => {
 
-    setShowLoading(true);   
-
-    questionService.getByCategory({ category: tutor.category})
-    .then(questionlist => {
-
-      bidService.getByTutorId(user.tutor_id)
-      .then( bidlist => { 
-        setBids(bidlist);
-        setShowBidsLoading(false);
+    ( async () => {
+      const user = await accountService.userValue;
+      const tutor = await accountService.tutorValue;
+      setUser(user);
+      setShowLoading(true);   
   
-        let unbidded:any = [];
-        const bidQuestions = bidlist.map( (bid:any) => bid.question_id );
-        questionlist.forEach( (question:any) => {
-          if( bidQuestions.indexOf(question.id) === -1 ) unbidded.push(question);
-        });
-        
-        console.log("Unbidded");
-        console.log(unbidded);
-        setPosted(unbidded);
-        setShowAllLoading(false);
-        setShowPostedLoading(false);
-      }); 
+      questionService.getByCategory({ category: tutor.category})
+      .then( async (questionlist) => {
+  
+        const submitted = await questionService.getByVariable({ tutor_id: tutor.id, status: "Submitted"});
+        const responded = await questionService.getByVariable({ tutor_id: tutor.id, status: "Responded"});
+        questionlist = [ ...submitted, ...responded, ...questionlist ];
 
-      setQuestions(questionlist); 
+        bidService.getByTutorId(user.tutor_id)
+        .then( bidlist => { 
+          setBids(bidlist);
+          setShowBidsLoading(false);
+          setShowAllLoading(false);
 
-    }).catch(err => setShowAllLoading(false) );
+          let unbidded:any = [];
+          const bidQuestions = bidlist.map( (bid:any) => bid.question_id );
+          questionlist.forEach( (question:any) => {
+            if( bidQuestions.indexOf(question.id) === -1 ) unbidded.push(question);
+          });
+          
+          setPosted(unbidded);
+          setShowPostedLoading(false);
+        }); 
 
-  }, []);
+        setQuestions(questionlist); 
+  
+      }).catch(err => setShowAllLoading(false) );
+  
+    })();
+
+  },[]); 
 
   return (
     <IonPage>

@@ -9,6 +9,7 @@ const baseUrl = `${config.apiUrl}/files`;
 export const fileService = {
     create,
     upload,
+    uploadMultiple,
     fileDownload,
     update,
     getById,
@@ -34,6 +35,15 @@ function upload(params) {
         .then(user => { return fetchWrapper.file(`${baseUrl}/upload`, params) });        
     }
     return fetchWrapper.file(`${baseUrl}/upload`, params);
+}
+
+function uploadMultiple(params) {
+
+    if( fetchWrapper.isTokenExpired() ) {
+        return accountService.getJwt()
+        .then(user => { return fetchWrapper.file(`${baseUrl}/upload_multiple`, params) });        
+    }
+    return fetchWrapper.file(`${baseUrl}/upload_multiple`, params);
 }
 
 function fileDownload(params) {

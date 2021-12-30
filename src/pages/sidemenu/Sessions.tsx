@@ -20,14 +20,13 @@ const Sessions: React.FC = () => {
   const [showScheduledLoading, setShowScheduledLoading] = useState<any>(true);
   const [showCompleteLoading, setShowCompleteLoading] = useState<any>(true);
 
-  const [user, setUser] = useState();
-  useEffect( async () => { setUser( await accountService.userValue); }, []);
-  
-  useEffect(() => {
-    setShowLoading(true);
+  const [user, setUser] = useState<any>();
+  useEffect( async () => { 
 
-    const user = accountService.userValue;
-    console.log(user);
+    setShowLoading(true);
+    const user:any = accountService.userValue;
+    setUser(user); 
+
     questionService.getByUserId(user.id)
     .then( questions => {
         let allList:any = [];
