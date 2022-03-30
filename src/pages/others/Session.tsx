@@ -21,7 +21,7 @@ const Session: React.FC = () => {
   const [segment, setSegment] = useState('favorites');
   const {state} = useLocation<any>();
   const { id, status } = useParams<any>();// {}//useParams();
-  const { email } = accountService.userValue;
+  const { email }:any = accountService.userValue;
   const isOnline = navigator.onLine;
 
   const history = useHistory();
@@ -78,17 +78,19 @@ const Session: React.FC = () => {
   };
 
   useEffect(() => {
-    
-    const user = accountService.userValue;
-    if( user ) {
-      accountService.getById(user.id)
-      .then( user => {
-        console.log( user );
-        // if( user && user.device_token === "" )
-          // setEnableNotifications(true);
-      })
-      .catch( error => console.log(error) );
-    }
+    ( async () => {
+
+      const user = await accountService.userValue;
+      if( user ) {
+        accountService.getById(user.id)
+        .then( user => {
+          console.log( user );
+          // if( user && user.device_token === "" )
+            // setEnableNotifications(true);
+        })
+        .catch( error => console.log(error) );
+      }
+    });
 
   }, []);
 

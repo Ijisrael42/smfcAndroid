@@ -21,8 +21,8 @@ const Withdrawals: React.FC = () => {
   const [showPendingLoading, setShowPendingLoading] = useState<any>(true);
   const [showRespondedLoading, setShowRespondedLoading] = useState<any>(true);
   const [ bankDetails, setBankDetails] = useState(null);
-  const tutor = accountService.tutorValue;
   const { platform } = usePlatform();
+  const [ tutor, setTutor] = useState<any>();
 
   const loaderOff = () => {
     setShowLoading(false);
@@ -32,6 +32,12 @@ const Withdrawals: React.FC = () => {
   }
 
   useEffect(() => {
+    ( async () => {
+
+      const tutor = await accountService.tutorValue;
+      setTutor(tutor);
+    });
+
     bankingdetailsService.getBySuplierId(tutor.id)
     .then( bankdetails => {
       console.log( bankdetails );
@@ -39,11 +45,7 @@ const Withdrawals: React.FC = () => {
     })
     .catch( error => { setShowLoading(false); console.log(error);} );
 
-  },[]);
-
-  useEffect(() => {
     setShowLoading(true);
-    const tutor = accountService.tutorValue;
 
     withdrawalsService.getBySuplierId(tutor.id)
     .then( withdrawals => {

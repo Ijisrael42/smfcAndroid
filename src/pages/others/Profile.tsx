@@ -1,6 +1,6 @@
 import { IonButtons, useIonToast, IonAvatar, IonIcon, IonLoading, IonButton, IonFooter, IonBackButton, IonList, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonThumbnail, IonGrid, IonRow, IonCol, IonLabel } from '@ionic/react';
 import { useParams } from 'react-router';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { accountService } from '../../services/accountService'; 
 import Input from "../../components/Input";
 import { useForm } from "react-hook-form";
@@ -12,6 +12,7 @@ import { config } from '../../helpers/config';
 import * as Yup from 'yup';
 import useResolver from '../../helpers/resolver';
 import { usePlatform } from '@capacitor-community/react-hooks/platform';
+import ImageUpload from '../../components/ImageUpload';
 
 const Profile: React.FC = () => {
 
@@ -24,8 +25,7 @@ const Profile: React.FC = () => {
   const [present, dismiss] = useIonToast();
   const [file, setFile] = useState<any>();
   const [fileError, setFileError] = useState("");
-
-  if(mode)  console.log('In the presentation mode:',mode);
+  const ref = useRef<any>(null);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -39,10 +39,15 @@ const Profile: React.FC = () => {
     defaultValues: user
   });
 
-  useEffect( async () => {
-    const userDetails = await accountService.userValue;
-    setUser(userDetails);
-    reset(userDetails);
+  useEffect( () => {
+    ( async () => {
+
+      const userDetails = await accountService.userValue;
+      console.log(userDetails);
+      setUser(userDetails);
+      reset(userDetails);
+
+    })()
   },[reset]);
 
   const clickUpdate = () => {
@@ -146,31 +151,14 @@ const Profile: React.FC = () => {
 
           { user && (
             <div>
-              <IonGrid >
-                <IonRow className="ion-justify-content-center">
-                  <IonCol size="3">
-                    <IonAvatar>
-                      <img 
-                      style={ platform === "ios" ? {position: "relative", left: "15px" } : {}}
-                       src={ user.profile_picture ? 
+              <div className="d-flex justify-content-center" >
+                <IonAvatar>
+                  <img src={ user.profile_picture ? 
                       `${config.apiUrl}/files/image/${user.profile_picture}` : config.userIcon }  alt="Speaker profile pic" />
+                </IonAvatar>
+              </div>
+              <ImageUpload name="avatar" error={fileError} setFileExt={setFile} />
 
-                      {/* <img src={ user.profile_picture ? 
-                      `${config.apiUrl}/files/image/${user.profile_picture}` : config.userIcon }  alt="Speaker profile pic" /> */}
-                    </IonAvatar>
-                  </IonCol>
-                </IonRow>
-                <IonRow className="ion-justify-content-center">
-                  <IonCol size="12" className="ion-text-center">
-                    <div><IonButton color={config.buttonColor} size="small" onClick={chooseFile} >Choose Picture</IonButton></div>
-                    <input className="ion-hide" id="file" type="file" onClick={() => setFileError("")} onChange={(e:any) => fileUpload(e)} />
-                  </IonCol>
-                  <IonCol size="12" className="ion-text-center">
-                    { !file ? "(jpeg, jpg, png)" : (<IonLabel>{file.name}</IonLabel>)}
-                    { fileError && (<IonLabel color="danger">{fileError}</IonLabel>)}
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
               <IonList>
                 <form onSubmit={handleSubmit(update)}>           
                   <Input name="name" label="Name" control={control} errors={errors} placeholder="e.g John Doe" />
@@ -178,7 +166,7 @@ const Profile: React.FC = () => {
                   placeholder="john@doe.com" />
                   <Input name="address" label="Address" control={control} errors={errors} placeholder="e.g 102 Anonymous Str" />
                   <Input name="contact_no" label="Contact No." control={control} errors={errors} type="number" placeholder="e.g 071 234 5678" />
-                 <IonButton id="submitForm" className="ion-hide" type="submit" ></IonButton>
+                  <IonButton ref={ref} id="submitForm" className="ion-hide" type="submit" />
                 </form>
               </IonList>
             </div>
@@ -198,7 +186,8 @@ const Profile: React.FC = () => {
 
       <IonFooter>
         <IonToolbar>
-          <IonButton className="ion-margin-horizontal" color={config.buttonColor} expand="full" onClick={clickUpdate}>
+          <IonButton className="ion-margin-horizontal" color={config.buttonColor} expand="full" 
+            onClick={() => ref.current.click()}>
           { ( mode && ( mode === "registration" || mode === "user" ) ) ? "NEXT" : "UPDATE" }
           </IonButton>
         </IonToolbar>

@@ -133,9 +133,9 @@ const Question: React.FC = () => {
                   <IonItem><IonText><p>{question.description}</p></IonText></IonItem> */}
 
                   <IonItem>Description : <br/>{question.description}</IonItem>                   
-                  <IonItem>
-                      <IonLabel>Category</IonLabel><IonText slot="end"><p>{field.name}</p></IonText>
-                  </IonItem>                  
+                  { question.category && (<IonItem>
+                    <IonLabel>Category</IonLabel><IonText slot="end"><p>{field.name}</p></IonText>
+                  </IonItem>) }                  
                   { files && files.map( (file: any, key:any) =>  (
                     <IonItem key={key}>
                       <IonText >{file}</IonText>

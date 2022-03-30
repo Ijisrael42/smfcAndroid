@@ -13,7 +13,8 @@ const ContactUs: React.FC = () => {
   const { name } = useParams<{ name: string; }>();
   const [present, dismiss] = useIonPopover(PopoverList, { onHide: () => dismiss() });
   const [user, setUser] = useState<any>();
-  useEffect(async () => { setUser(await accountService.userValue); },[]);
+  
+  useEffect( () => { ( async () => setUser(await accountService.userValue) )(); },[]);
 
   return (
     <IonPage>

@@ -8,7 +8,7 @@ import { accountService } from '../../services/accountService';
 import { useState, useEffect } from "react";
 import Header from '../../components/Header';
 
-const Intro: React.FC = () => {
+const Intro = () => {
 
   const [user, setUser] = useState();
   useEffect( async () => { setUser(await accountService.userValue); }, []);
@@ -37,7 +37,7 @@ const Intro: React.FC = () => {
                 <IonItem><IonLabel><h3>1. Post your question with  a budget</h3></IonLabel></IonItem>
                 <IonItem><IonLabel><h3>2. Tutor respond with their own prices.</h3></IonLabel></IonItem>
                 <IonItem><IonLabel><h3>3. Select your prefered tutor</h3></IonLabel></IonItem>
-                <IonItem><IonLabel><h3>4. Pay tutor and get your answers to your questions.</h3></IonLabel></IonItem>
+                <IonItem><IonLabel><h3>4. Pay tutor and get your answers.</h3></IonLabel></IonItem>
                 
             </IonList>
             { user ? (

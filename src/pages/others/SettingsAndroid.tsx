@@ -1,7 +1,7 @@
 import { IonButtons, useIonToast, IonFooter, IonToggle, IonLoading, IonIcon, IonButton, IonBackButton, IonList, IonLabel, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem } from '@ionic/react';
 import { useParams } from 'react-router';
 // import './Intro.scss';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { accountService } from '../../services/accountService'; 
 import { useHistory } from "react-router-dom";
 // import { config } from "../../helpers/config";
@@ -16,24 +16,28 @@ const SettingsAndroid: React.FC = () => {
   const history = useHistory();
   const [showLoading, setShowLoading] = useState<any>(false);
   const [checked, setChecked] = useState(false);
-  const user = accountService.userValue;
+  const [user, setUser] = useState<any>();
   const [error, setError] = useState("");
   const [present, dismiss] = useIonToast();
   const { platform } = usePlatform();
+  const homeBtn = useRef<any>(null);
+  const tutorBtn = useRef<any>(null);
 
   useEffect(() => {
-    console.log(user);
-    const isToken = ( user && user.device_token ) ? true : false;
-    setChecked(isToken);    
+    ( async () => {
+      const user = await accountService.userValue;
 
+      setUser(user);
+      const isToken = ( user && user.device_token ) ? true : false;
+      setChecked(isToken);    
+    })();
   }, []);
 
   const enableDisable = async (isEnabled: any) => {
 
+      setChecked(isEnabled); setShowLoading(true);     
     if( platform === 'android' || platform === 'ios' ) {
 
-      setChecked(isEnabled);
-      setShowLoading(true);     
 
       // if( isEnabled === false ) update({ device_token: "" });
       if( isEnabled == 0 ) update({ device_token: "" });
@@ -94,9 +98,11 @@ const SettingsAndroid: React.FC = () => {
     else response.then(() => history.replace('/home'));
   }
 
+  
   const next = () => {
-    if( mode === "registration") history.push("/supplier/product/create");
-    if( mode === "user") history.push("/home");
+console.log(user)
+    if( user && user.role === "User" ) homeBtn.current.click();
+    else if(user && user.role === "Tutor" ) tutorBtn.current.click();
   };
 
   return (
@@ -128,20 +134,16 @@ const SettingsAndroid: React.FC = () => {
           </IonItem>
         </div>
 
-        <IonLoading
-              cssClass='my-custom-class'
-              isOpen={showLoading}
-              onDidDismiss={() => setShowLoading(false)}
-              spinner={'bubbles'}
-              message={'Please wait...'}
-              duration={5000}
-          />
+        <IonButton ref={homeBtn} routerLink="/home" className="ion-hide" />
+        <IonButton ref={tutorBtn} routerLink="/tutor" className="ion-hide" />
+        <IonLoading cssClass='my-custom-class' isOpen={showLoading} onDidDismiss={() => setShowLoading(false)}
+              spinner={'bubbles'} message={'Please wait...'} duration={5000} />
 
       </IonContent>
 
       <IonFooter>
         <IonToolbar>  
-        { ( mode && mode === "registration" || mode === "user" ) ? (
+        { ( mode && mode === "registration" || mode === "user" || mode === "login" ) ? (
           <IonButton onClick={next} disabled={ checked ? false : true } className="ion-margin-horizontal" color={config.buttonColor} expand="full" > NEXT </IonButton>
         ) : (
           <IonButton className="ion-margin-horizontal" color={config.buttonColor} expand="full" onClick={logout}> 

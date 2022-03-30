@@ -16,9 +16,7 @@ const Images: React.FC = () => {
   const [present, dismiss] = useIonPopover(PopoverList, { onHide: () => dismiss() });
   const history = useHistory();
 
-  useEffect(() => {
-    setUser(accountService.userValue);
-  }, []);
+  useEffect( () => { ( async () => setUser(await accountService.userValue) )(); },[]);
 
   return (
     <IonPage>

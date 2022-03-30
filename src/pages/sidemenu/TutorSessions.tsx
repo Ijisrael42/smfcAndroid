@@ -6,6 +6,7 @@ import { accountService } from '../../services/accountService';
 import SkeletonLoader from "../../components/SkeletonLoader";
 import { config } from '../../helpers/config';
 import Header from '../../components/Header';
+import { async } from 'rxjs';
 
 const TutorSessions: React.FC = () => {
 
@@ -29,34 +30,37 @@ const TutorSessions: React.FC = () => {
     setShowCompleteLoading(false);
   };
 
-  useEffect( async () => {
-    const user = await accountService.userValue;
-    setUser(user);
-    setShowLoading(true);
+  useEffect( () => {
 
-    questionService.getByTutorId(user.tutor_id)
-    .then( questions => {
-        let allList:any = [];
-        let scheduleList:any = [];
-        let completeList:any = [];
-
-        questions.forEach( (question:any) => {
-          if( question.status === "Paid" || question.status === "Scheduled" || question.status === "Complete" ) {
-            if( question.status === "Paid" || question.status === "Scheduled" ) scheduleList.push(question);
-            else if( question.status === "Complete" ) completeList.push(question);
-            allList.push(question);
-          }
-        })
-
-        setQuestions(allList); 
-        setScheduled(scheduleList);
-        setComplete(completeList);
-        loaderOff();
-
-    }).catch( error => {
-        console.log(error);
-        loaderOff();
-    });
+    ( async () => {
+      const user = await accountService.userValue;
+      setUser(user);
+      setShowLoading(true);
+  
+      questionService.getByTutorId(user.tutor_id)
+      .then( questions => {
+          let allList:any = [];
+          let scheduleList:any = [];
+          let completeList:any = [];
+  
+          questions.forEach( (question:any) => {
+            if( question.status === "Paid" || question.status === "Scheduled" || question.status === "Complete" ) {
+              if( question.status === "Paid" || question.status === "Scheduled" ) scheduleList.push(question);
+              else if( question.status === "Complete" ) completeList.push(question);
+              allList.push(question);
+            }
+          })
+  
+          setQuestions(allList); 
+          setScheduled(scheduleList);
+          setComplete(completeList);
+          loaderOff();
+  
+      }).catch( error => {
+          console.log(error);
+          loaderOff();
+      });
+    })();
 
   }, []);
 

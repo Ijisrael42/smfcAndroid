@@ -71,9 +71,11 @@ const Question: React.FC = () => {
   const createBid = (data: any) => {
     setError(""); 
     setShowLoading(true);
+    let date = new Date().toString().split(" GMT")[0];
+    date = date.slice(0, date.length - 3);
 
     data = { ...data, question_id: question.id, question_title: question.title,
-    tutor_id: user.tutor_id, tutor_name: user.name, status: "Submitted" };
+    tutor_id: user.tutor_id, tutor_name: user.name, status: "Submitted", date_time: date };
 
     console.log("creating a new user account with: ", data);
     bidService.create(data)
@@ -144,9 +146,9 @@ const Question: React.FC = () => {
                   Description :<br/>
                   {question.description}
                 </IonItem>                   
-                <IonItem>
+                { question.category && (<IonItem>
                   <IonLabel>Category</IonLabel><IonText slot="end"><p>{field.name}</p></IonText>
-                </IonItem>                  
+                </IonItem>) }                  
                 { files && files.map( (file: any, key:any) =>  (
                   <IonItem key={key}>
                     <IonText >{file}</IonText>

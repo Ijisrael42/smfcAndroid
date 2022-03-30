@@ -31,6 +31,7 @@ import { config } from "../../helpers/config";
 import { arrowBackOutline, arrowBackSharp, checkmarkDoneOutline, checkmarkDoneSharp } from "ionicons/icons";
 import "@codetrix-studio/capacitor-google-auth";
 import { usePlatform } from "@capacitor-community/react-hooks/platform/usePlatform";
+import { useAuth } from "../../AuthContext";
 
 const RegisterCapacitor: React.FC = () => {
 
@@ -40,6 +41,7 @@ const RegisterCapacitor: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState<any>(false);
   const [submit, setSubmit] = useState<any>(false);
   const { platform } = usePlatform();
+  const { logIn } = useAuth();
 
   useEffect(() => { Plugins.GoogleAuth.init();},[])
 
@@ -91,6 +93,7 @@ const RegisterCapacitor: React.FC = () => {
       accountService.googleSignUp({ token: result.authentication.idToken })
       .then((user) => {
           console.log(user);
+          // logIn(user);
           history.push('/profile/user');   
       })
       .catch(error => { setError(error) });   

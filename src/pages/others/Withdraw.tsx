@@ -20,8 +20,8 @@ const Withdraw: React.FC = () => {
   const { bankDetails, withDrawal } = state;
   const {id} = useParams<any>();
   const [present, dismiss] = useIonToast();
-  const tutor = accountService.tutorValue;
   const { platform } = usePlatform();
+  const [ tutor, setTutor] = useState<any>();
 
   /* const validationSchema = Yup.object().shape({
     account_name: Yup.string().required('Account Name is required'),
@@ -33,6 +33,14 @@ const Withdraw: React.FC = () => {
     resolver: useResolver(validationSchema),
     defaultValues: state
   }); */
+
+  useEffect(() => {
+    ( async () => {
+
+      const tutor = await accountService.tutorValue;
+      setTutor(tutor);
+    });
+  },[]);
 
   const create = () => {
     const data = { amount: tutor.credit, supplier_id: tutor.id, bank_id: bankDetails.id, status: "Submitted" };

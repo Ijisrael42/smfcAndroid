@@ -15,9 +15,7 @@ const Upload: React.FC = () => {
   const [file, setFile] = useState<any>();
   const [fileError, setFileError] = useState("");
 
-  useEffect(() => {
-    setUser(accountService.userValue);
-  }, []);
+  useEffect( () => { ( async () => setUser(await accountService.userValue) )(); },[]);
 
   const fileUpload = (e:any) => {
     let file = e.target.files[0];

@@ -11,45 +11,46 @@ import { usePlatform } from '@capacitor-community/react-hooks/platform/usePlatfo
 
 const Wallet: React.FC = () => {
 
-  const { state } = useLocation();
+  const { state }:any = useLocation();
   const history = useHistory();
   const [withdrawals, setQuestions] = useState<any>([]);
   const [segment, setSegment] = useState('all');
   const [showLoading, setShowLoading] = useState<any>(false);
   const [showAllLoading, setShowAllLoading] = useState<any>(true);
   const [ bankDetails, setBankDetails] = useState(null);
-  const tutor = accountService.tutorValue;
+  const [ tutor, setTutor] = useState<any>();
   const { platform } = usePlatform();
 
-
   useEffect(() => {
-    bankingdetailsService.getBySuplierId(tutor.id)
-    .then( bankdetails => {
-      console.log( bankdetails );
-      setBankDetails(bankdetails);setShowLoading(false);
-    })
-    .catch( error => { setShowLoading(false); console.log(error);} );
+    ( async () => {
 
-  },[]);
+      const tutor = await accountService.tutorValue;
+      setTutor(tutor);
 
-  useEffect(() => {
-    setShowLoading(true);
-    const tutor = accountService.tutorValue;
+      bankingdetailsService.getBySuplierId(tutor.id)
+      .then( bankdetails => {
+        console.log( bankdetails );
+        setBankDetails(bankdetails);setShowLoading(false);
+      })
+      .catch( error => { setShowLoading(false); console.log(error);} );
+    
+      setShowLoading(true);
 
-    withdrawalsService.getBySuplierId(tutor.id)
-    .then( withdrawals => {
-        let respondedList:any = [];
-        let pendingList:any = [];
-        console.log(withdrawals);
+      withdrawalsService.getBySuplierId(tutor.id)
+      .then( withdrawals => {
+          let respondedList:any = [];
+          let pendingList:any = [];
+          console.log(withdrawals);
 
-        withdrawals.forEach( (withdrawal:any) => {
-          if( withdrawal.status === "Responded" ) respondedList.push(withdrawal);
-          else if( withdrawal.status === "Submitted" ) pendingList.push(withdrawal);
-        })
+          withdrawals.forEach( (withdrawal:any) => {
+            if( withdrawal.status === "Responded" ) respondedList.push(withdrawal);
+            else if( withdrawal.status === "Submitted" ) pendingList.push(withdrawal);
+          })
 
-        setQuestions(withdrawals); 
-    }).catch( (error: any) => {
-        console.log(error);
+          setQuestions(withdrawals); 
+      }).catch( (error: any) => {
+          console.log(error);
+      });
     });
 
   }, []);

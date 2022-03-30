@@ -39,16 +39,18 @@ const TutorQuestionList: React.FC = () => {
 
         bidService.getByTutorId(user.tutor_id)
         .then( bidlist => { 
-          setBids(bidlist);
           setShowBidsLoading(false);
           setShowAllLoading(false);
 
           let unbidded:any = [];
+          let bidded:any = [];
           const bidQuestions = bidlist.map( (bid:any) => bid.question_id );
           questionlist.forEach( (question:any) => {
             if( bidQuestions.indexOf(question.id) === -1 ) unbidded.push(question);
+            bidlist.forEach((bid:any) => {if(bid.question_id === question.id) bidded.push(bid);});
           });
-          
+
+          setBids(bidded);
           setPosted(unbidded);
           setShowPostedLoading(false);
         }); 
@@ -142,7 +144,8 @@ const TutorQuestionList: React.FC = () => {
                     <IonLabel>
                       <h2>{question.title}</h2>
                       <h6 style={{ opacity: ".5" }}>{question.date_time} ({question.no_of_hours} HRS)</h6>
-                    </IonLabel>                  </IonItem>    
+                    </IonLabel>                  
+                  </IonItem>    
                 ))
               )
             }

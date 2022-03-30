@@ -2,7 +2,7 @@ import { IonContent, IonPage, IonHeader, IonToolbar, IonTitle, IonText, IonTexta
   IonSelectOption, IonButton, IonItem, IonLabel, IonChip, useIonPopover, IonList, IonAvatar, IonSegment, IonSegmentButton, IonFooter, IonLoading, IonIcon
 } from "@ionic/react";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Input from "../../components/Input";
 import { object, string, array } from "yup";
 import useResolver from "../../helpers/resolver";
@@ -18,6 +18,7 @@ import { config } from "../../helpers/config";
 import HeaderMenu from "../../components/HeaderMenu";
 import { fieldService } from "../../services/fieldService";
 import Header from "../../components/Header";
+import FileUpload from "../../components/FileUpload";
 
 const TutorApplication: React.FC = () => {
 
@@ -25,6 +26,8 @@ const TutorApplication: React.FC = () => {
   const [ fields, setFields ] = useState<any>();
   const [idPassportFile, setIdPassportFile] = useState<any>(null);
   const [idPassportFileError, setIdPassportFileError] = useState<any>(null);
+  const [trascriptFile, setTrascriptFile] = useState<any>(null);
+  const [trascriptFileError, setTrascriptFileError] = useState<any>(null);
   const [companyFile, setCompanyFile] = useState<any>(null);
   const [companyFileError, setCompanyFileError] = useState<any>(null);
   const [sarsFile, setSarsFile] = useState<any>(null);
@@ -36,20 +39,18 @@ const TutorApplication: React.FC = () => {
   const [submit, setSubmit] = useState<any>(false);
   const [showSuccess, setShowSuccess] = useState<any>(false);
   const [user, setUser] = useState();
-  useEffect( async () => { setUser( await accountService.userValue); }, []);
- 
-  useEffect(() => {
-    setUser(accountService.userValue);
-    
+  const ref = useRef<any>(null);
+
+  useEffect( () => { ( async () => {
+    setUser(await accountService.userValue);
     fieldService.getAll()
     .then( response => {
       console.log(response);
       setFields(response);
     })
     .catch( error => console.log(error) );
-  
-  },[]);
-  
+  })(); },[]);
+   
   const validationSchema = object().shape({
     name: string().required(),
     email: string().required(),
@@ -58,21 +59,20 @@ const TutorApplication: React.FC = () => {
     experience: string().required().min(25),
   });
   
-  const { control, handleSubmit, errors } = useForm({
+  const { control, handleSubmit, errors, register, setValue } = useForm({
     resolver: useResolver(validationSchema),
   });
   
   // const apply = async (data: any) => {
   const apply = (data: any) => {
-    if( !idPassportFile ) setIdPassportFileError("Upload file");
-    if( !companyFile ) setCompanyFileError("Upload file");
-  
-    if( !idPassportFile ||!companyFile ) return;
-    
+
+    if( !data.idPassport ) setIdPassportFileError("Upload file");
+    if( !data.idPassport ) setTrascriptFileError("Upload file");
+
     setSubmit(true);
     setShowLoading(true);
     
-    const documents = `${idPassportFile.name},${companyFile.name}`;
+    const documents = `${data.idPassport},${data.idPassport}`;
     data = { ...data, category: data.category.toString(), application_status: "Submitted", documents: documents };
     console.log("creating a new user account with: ", data);
     // const response = await allFileUpload();
@@ -186,24 +186,10 @@ const TutorApplication: React.FC = () => {
           />
 
           <IonItemGroup>
-            <IonItem lines="none"> 
-              <IonLabel><b>ID/Passport</b></IonLabel>
-              { idPassportFileError ? (<IonLabel color="danger"> {idPassportFileError} </IonLabel>) : (<IonLabel>(docx,doc,pdf)</IonLabel>) } 
-            </IonItem>
-            <IonItem> <input id="idPassport" type="file" onClick={() => { setIdPassportFile(""); setIdPassportFileError("");}} 
-              onChange={(e:any) => fileUpload(e,"idPassport", setIdPassportFile, setIdPassportFileError)} /> 
-            </IonItem>  
-
-            <IonItem lines="none"> 
-              <IonLabel>Academic Transcript</IonLabel>
-              { companyFileError ? (<IonLabel color="danger"> {companyFileError} </IonLabel>) : (<IonLabel>(docx,doc,pdf)</IonLabel>) } 
-            </IonItem>
-            <IonItem> <input id="company" type="file" onClick={() => { setCompanyFile(""); setCompanyFileError("");}} 
-              onChange={(e:any) => fileUpload(e,"company", setCompanyFile, setCompanyFileError)} /> 
-            </IonItem>              
+            <FileUpload name="idPassport" description="ID/Passport" error={idPassportFileError} register={register} setValue={setValue} />
+            <FileUpload name="trascript" description="Academic Transcript" error={trascriptFileError} register={register} setValue={setValue} />
           </IonItemGroup>
-
-          <IonButton expand="block" type="submit"  id="submitForm" className="ion-hide"> </IonButton>
+          <IonButton ref={ref} expand="block" type="submit" id="submitForm" className="ion-hide" />
         </form>
         
       </div>
@@ -232,7 +218,7 @@ const TutorApplication: React.FC = () => {
       
       <IonFooter className={ submit ? "ion-hide" : "" }>
       <IonToolbar >
-        <IonButton className="ion-margin-horizontal" color={config.buttonColor} expand="full" onClick={clickSubmit}>Submit</IonButton>
+        <IonButton className="ion-margin-horizontal" color={config.buttonColor} expand="full" onClick={() => ref.current.click()} >Submit</IonButton>
       </IonToolbar>
     </IonFooter>
 

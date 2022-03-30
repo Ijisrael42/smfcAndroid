@@ -21,43 +21,44 @@ const Sessions: React.FC = () => {
   const [showCompleteLoading, setShowCompleteLoading] = useState<any>(true);
 
   const [user, setUser] = useState<any>();
-  useEffect( async () => { 
+  useEffect( () => { 
+    ( async () => {
+      setUser(await accountService.userValue) 
+      setShowLoading(true);
+      const user:any = accountService.userValue;
+      setUser(user); 
 
-    setShowLoading(true);
-    const user:any = accountService.userValue;
-    setUser(user); 
+      questionService.getByUserId(user.id)
+      .then( questions => {
+          let allList:any = [];
+          let scheduleList:any = [];
+          let completeList:any = [];
+          console.log(questions);
 
-    questionService.getByUserId(user.id)
-    .then( questions => {
-        let allList:any = [];
-        let scheduleList:any = [];
-        let completeList:any = [];
-        console.log(questions);
+          questions.forEach( (question:any) => {
+            if( question.status === "Paid" || question.status === "Scheduled" || question.status === "Complete" ) {
+              if( question.status === "Paid" || question.status === "Scheduled" ) scheduleList.push(question);
+              else if( question.status === "Complete" ) completeList.push(question);
+              allList.push(question);
+            }
+          })
 
-        questions.forEach( (question:any) => {
-          if( question.status === "Paid" || question.status === "Scheduled" || question.status === "Complete" ) {
-            if( question.status === "Paid" || question.status === "Scheduled" ) scheduleList.push(question);
-            else if( question.status === "Complete" ) completeList.push(question);
-            allList.push(question);
-          }
-        })
+          setQuestions(allList); 
+          setScheduled(scheduleList);
+          setComplete(completeList);
+          setShowLoading(false);
+          setShowAllLoading(false);
+          setShowScheduledLoading(false);
+          setShowCompleteLoading(false);
+      }).catch( error => {
+          console.log(error);
+          setShowLoading(false);
+          setShowAllLoading(false);
+          setShowScheduledLoading(false);
+          setShowCompleteLoading(false);
 
-        setQuestions(allList); 
-        setScheduled(scheduleList);
-        setComplete(completeList);
-        setShowLoading(false);
-        setShowAllLoading(false);
-        setShowScheduledLoading(false);
-        setShowCompleteLoading(false);
-    }).catch( error => {
-        console.log(error);
-        setShowLoading(false);
-        setShowAllLoading(false);
-        setShowScheduledLoading(false);
-        setShowCompleteLoading(false);
-
-    });
-
+      });    
+    })();
   }, []);
 
   return (

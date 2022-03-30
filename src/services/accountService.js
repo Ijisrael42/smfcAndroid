@@ -20,6 +20,8 @@ export const accountService = {
     register,
     googleSignUp,
     googleLogin,
+    appleSignUp,
+    appleLogin,
     registerTutor,
     getJwt,
     getAll,
@@ -32,10 +34,12 @@ export const accountService = {
     switctToUser,
     switctToTutor,
     setUser,
-    setTutor
+    setTutor,
+    verifyEmail
 }; 
 
 async function setUser(user){
+    
     userSubject.next(user);
     await Storage.set({ key: 'user', value: JSON.stringify(user) });
 }
@@ -72,6 +76,21 @@ function login(email, password) {
         setUser(user);
         return user;
     });
+}
+
+function verifyEmail(token) {
+    return fetchWrapper.post(`${baseUrl}/verify-email`, { token:  token })
+    .then( async (res) => {  return res; });
+}
+
+function forgotPassword(data) {
+    return fetchWrapper.post(`${baseUrl}/forgot-password`, data)
+    .then( async (res) => {  return res; });
+}
+
+function resetPassword(data) {
+    return fetchWrapper.post(`${baseUrl}/reset-password`, data)
+    .then( async (res) => {  return res; });
 }
 
 async function getJwt() {
@@ -174,14 +193,10 @@ function update(id, params) {
         return getJwt()
         .then(user => {
             // publish user to subscribers and start timer to refresh token
-            setUser(user);        
 
             return fetchWrapper.put(`${baseUrl}/${id}`, params)
-            .then(user => {
+            .then( async (user) => {
                 // publish user to subscribers and start timer to refresh token
-                const oldDetails = userParse();
-                user.jwtToken = oldDetails.jwtToken;
-                user.role = oldDetails.role;
                 setUser(user);        
                 return user;
             });
@@ -191,7 +206,6 @@ function update(id, params) {
     .then(user => {
         // publish user to subscribers and start timer to refresh token
         const oldDetails = userParse();
-        user.jwtToken = oldDetails.jwtToken;
         user.role = oldDetails.role;
         setUser(user);        
         return user;
@@ -266,6 +280,30 @@ function googleLogin(params) {
         if(user.tutor_id) {
             const tutor = await tutorService.getById(user.tutor_id);
             setTutor(tutor);
+        }
+        setUser(user);
+        return user;
+    });
+}
+
+function appleSignUp(params) {
+    return fetchWrapper.post(`${baseUrl}/apple-signup`, params)
+    .then(user => {
+        // publish user to subscribers and start timer to refresh token
+        setUser(user);        
+        return user;
+    });
+}
+
+function appleLogin(params) {
+
+    return fetchWrapper.post(`${baseUrl}/apple-login`, params)
+    .then( async (user) => {
+        // publish user to subscribers and start timer to refresh token
+        user.role = (user.supplier) ? "Tutor" : "User";
+        if(user.supplier) {
+            const supplier = await supplierService.getById(user.supplier);
+            setSupplier(supplier);
         }
         setUser(user);
         return user;

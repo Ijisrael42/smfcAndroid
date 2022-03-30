@@ -22,7 +22,7 @@ const Session: React.FC = () => {
   const [segment, setSegment] = useState('favorites');
   const {state} = useLocation<any>();
   const { id, status } = useParams<any>();// {}//useParams();
-  const { email } = accountService.userValue;
+  const { email }:any = accountService.userValue;
   const isOnline = navigator.onLine;
   const [present, dismiss] = useIonPopover(PopoverReport, { onHide: () => dismiss() });
 

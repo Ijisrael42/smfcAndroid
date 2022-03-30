@@ -47,7 +47,9 @@ const TutorProfile: React.FC<any> = () => {
     defaultValues: tutor
   });
 
-  useEffect( async () => {
+  useEffect(  () => {
+    ( async () => {
+
     const tutor = await accountService.tutorValue;
     setTutor(tutor);
     reset(tutor);
@@ -55,6 +57,8 @@ const TutorProfile: React.FC<any> = () => {
     fieldService.getAll()
     .then( response => { setFields(response); })
     .catch( error => console.log(error) );
+    });
+    
   },[reset]);
 
   const clickUpdate = () => {

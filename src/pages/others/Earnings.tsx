@@ -13,7 +13,7 @@ import { usePlatform } from '@capacitor-community/react-hooks/platform/usePlatfo
 
 const Earnings: React.FC = () => {
 
-  const user = accountService.userValue;
+  const user:any = accountService.userValue;
   const history = useHistory();
   const [products, setProducts] = useState<any>([]);
   const [list, setList] = useState<any>(null);
