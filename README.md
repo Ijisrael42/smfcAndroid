@@ -71,7 +71,9 @@ npm start
 
 4. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-5. Run tests
+5. Run the <a href="https://github.com/Ijisrael42/etutor-backend">etutor-backend</a> Node.js server to fetch data from the MongoDB server into the App
+
+6. Run tests
 
 ```shell
 npm run test
